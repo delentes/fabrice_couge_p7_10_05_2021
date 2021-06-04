@@ -1,20 +1,9 @@
 const express = require('express');
-const mysql = require('mysql');
-require('dotenv').config();
+const path = require('path');
+const helmet = require('helmet')
+const limiter = require('./middleware/rateLimit-config')
 
-
-
-const db = mysql.createConnection({
-    host: "",
-    user: "",
-    password: "",
-    database: ""
-});
-
-db.connect(function(err) {
-    if (err) throw err;
-    console.log("Connecté à la base de données MySQL");
-})
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -26,5 +15,10 @@ app.use((req, res, next) => {
   });
 
 app.use(express.json());
+app.use(helmet());
+app.use(limiter);
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
