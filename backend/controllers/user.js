@@ -34,8 +34,7 @@ exports.signup = (req, res, next) => {
                 password = hash,
                 isadmin = 0,
             ];
-            
-            ('INSERT INTO `user` VALUE = ?', [record], function(err, result, field) {
+            ('INSERT INTO user VALUE = ?', [record], function(err, result, field) {
                 if (err) throw err;
                 else result.status(200).json({ message: 'Utilisateur créé !'});
             })
@@ -45,8 +44,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    let email = req.body.email;
-    connection.query('SELECT * FROM `user` WHERE `email`= ?', [email], function(err, result, field) {
+    connection.query('SELECT * FROM user WHERE email = ?', req.body.email, function(err, result, field) {
         if (err) throw err;
         else if (!user) 
             return result.status(401).json({ err: 'Utilisateur non trouvé !'});
@@ -57,10 +55,10 @@ exports.login = (req, res, next) => {
                     return result.status(401).json({ err: 'Mot de passe incorrect !'});
                 }
                 result.status(200).json({
-                    userId: user_id,
+                    userId: user._id,
                     token: jwt.sign(
                         { userId: user._id },
-                        '',
+                        'RANDOM_SECRET_TOKEN',
                         {expiresIn: '24h'}
                     )
                 });
@@ -71,12 +69,40 @@ exports.login = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
-    let id = req.params._id;
-    connection.query('SELECT `id` FROM `user` WHERE `id` = ?', [id], function(err, result, field) {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+        const userId = decodedToken.userId;
+        if (req.body.userId && req.body.userId !== userId) {
+            throw 'Identifiant invalide';
+        } else {
+            connection.query('DELETE FROM user WHERE id = ?', userId, function(err, result, field) {
+                if (err) throw err;
+                result.status(200).json({ message: 'Utilisateur supprimé !'})
+            });
+        }
+    } catch {
+        res.status(401).json({ err: new Error('Requête invalide')});
+    }    
+};
+
+exports.getAllUser = (req, res, next) => {
+    connection.query('SELECT id, lastname, firstname FROM user ORDER BY creation_date DESC', function(err, result, field) {
         if (err) throw err;
-        ('DELETE FROM `user` WHERE `id` = ?',[id], function(err, result, field) {
-            if (err) throw err;
-            result.status(200).json({ message: 'Utilisateur supprimé !'})
-        });
+        result.status(200).json(users)
+    });
+};
+
+exports.adminDeleteUser = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.params.id, function(err, result, field) {
+        if (err) throw err;
+        else if (isadmin == 0){
+            result.status(401).json({ err: 'Vous n\'avez pas les droits d\'administration'});
+        } else {
+            ('DELETE FROM user WHERE id = ?',req.body.id, function(err, result, field){
+                if (err) throw err;
+                result.status(200).json({ message: 'Utilisateur supprimé !'})
+            });
+        }
     });
 };
