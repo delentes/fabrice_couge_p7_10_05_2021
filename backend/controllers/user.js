@@ -36,7 +36,7 @@ exports.signup = (req, res, next) => {
             ];
             ('INSERT INTO user VALUE = ?', [record], function(err, result, field) {
                 if (err) throw err;
-                else result.status(200).json({ message: 'Utilisateur créé !'});
+                else result.status(201).json({ message: 'Utilisateur créé !'});
             })
         })
         .catch(err => result.status(500).json({ err }));
@@ -86,6 +86,7 @@ exports.deleteUser = (req, res, next) => {
     }    
 };
 
+// Admin management
 exports.getAllUser = (req, res, next) => {
     connection.query('SELECT id, lastname, firstname FROM user ORDER BY creation_date DESC', function(err, result, field) {
         if (err) throw err;

@@ -9,6 +9,7 @@ const connection = mysql.createConnection({
     database: 'groupomania'
 });
 
+// Topic management
 exports.createTopic = (req, res, next) => {
     let record = [
         title = escape(req.body.title),
@@ -64,7 +65,7 @@ exports.deleteTopic = (req, res, next) => {
     });
 };
 
-//like management
+// like management
 
 exports.addTopicLike = (req, res, next) => {
     connection.query('SELECT * FROM topiclike LEFT OUTER JOIN topic ON topiclike.topic_id = topic.id LEFT OUTHER JOIN user ON topiclike.user_id = user.id WHERE = topic_id ', function(err, result, field){
