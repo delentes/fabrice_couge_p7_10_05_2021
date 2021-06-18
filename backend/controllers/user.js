@@ -20,27 +20,28 @@ exports.signup = (req, res, next) => {
     } 
     else if (req.body.password != /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/){
         return res.status(400).json({ err: 'Merci de saisir un mot de passe avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial'})
-    };
-
-    connection.query(function(err, result, field){
-        if (err) throw err;
-        
-        bcrypt.hash(req.body.password, 10)
-        .then(hash => {
-            let record = [
-                lastname = mysql.escape(req.body.lastname),
-                firstname = mysql.escape(req.body.firstname),
-                email = mysql.escape(email),
-                password = hash,
-                isadmin = 0,
-            ];
-            ('INSERT INTO user VALUE = ?', [record], function(err, result, field) {
-                if (err) throw err;
-                else result.status(201).json({ message: 'Utilisateur créé !'});
+    }
+    else {
+        connection.query(function(err, result, field){
+            if (err) throw err;
+            
+            bcrypt.hash(req.body.password, 10)
+            .then(hash => {
+                let record = [
+                    lastname = mysql.escape(req.body.lastname),
+                    firstname = mysql.escape(req.body.firstname),
+                    email = mysql.escape(email),
+                    password = hash,
+                    isadmin = 0,
+                ];
+                ('INSERT INTO user VALUE = ?', [record], function(err, result, field) {
+                    if (err) throw err;
+                    else result.status(201).json({ message: 'Utilisateur créé !'});
+                })
             })
+            .catch(err => result.status(500).json({ err }));
         })
-        .catch(err => result.status(500).json({ err }));
-    })
+    }
 };
 
 exports.login = (req, res, next) => {

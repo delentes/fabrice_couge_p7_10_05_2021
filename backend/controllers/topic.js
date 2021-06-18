@@ -46,9 +46,16 @@ exports.modifyTopic = (req, req, next) => {
             title = escape(req.body.title),
             topic = escape(req.body.topic)
         ]};
-    connection.query('UPDATE topic SET = ? WHERE = ?', [record] , req.params.id, function(err, result, field) {
-        if (err) throw err
-        result.status(200).json({ message: 'Méssage modifié !'});
+    connection.query('SELECT user_id FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
+        if (err) throw err;
+        if (user_id === req.body.user_id) {
+            connection.query('UPDATE topic SET = ? WHERE = ?', [record] , req.params.id, function(err, result, field) {
+                if (err) throw err
+                result.status(200).json({ message: 'Méssage modifié !'});
+            });
+        } else {
+            result.status(401).json({ error: new Error ('Requête invalide')});
+        }
     });
 };
 
@@ -70,7 +77,7 @@ exports.deleteTopic = (req, res, next) => {
 exports.addTopicLike = (req, res, next) => {
     connection.query('SELECT * FROM topiclike LEFT OUTER JOIN topic ON topiclike.topic_id = topic.id LEFT OUTHER JOIN user ON topiclike.user_id = user.id WHERE = topic_id ', function(err, result, field){
         if (err) throw err;
-        else if (topiclike.like_topic == 1 ) {
+        if (topiclike.like_topic == 1 ) {
             result.status(400).json({ message: 'Topic déjà liké !'});
         } else {
             ('INSERT INTO topiclike SET like_topic = 1', function(err, result, field) {
