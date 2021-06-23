@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -8,6 +9,10 @@ const connection = mysql.createConnection({
     password: '',
     database: 'groupomania'
 });
+
+const token = req.headers.authorization.split(' ')[1];
+const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+const userId = decodedToken.userId;
 
 // Topic management
 exports.createTopic = (req, res, next) => {
@@ -48,27 +53,48 @@ exports.modifyTopic = (req, req, next) => {
         ]};
     connection.query('SELECT user_id FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        if (user_id === req.body.user_id) {
-            connection.query('UPDATE topic SET = ? WHERE = ?', [record] , req.params.id, function(err, result, field) {
+        if (userId === topic.user_id) {
+            ('UPDATE topic SET = ? WHERE = ?', [record] , req.params.id, function(err, result, field) {
                 if (err) throw err
                 result.status(200).json({ message: 'Méssage modifié !'});
             });
         } else {
             result.status(401).json({ error: new Error ('Requête invalide')});
-        }
+        };
     });
 };
 
 exports.deleteTopic = (req, res, next) => {
-    connection.query('SELECT topic FROM topic WHERE = ?', req.params.id, function(err, result, field) {
+    connection.query('SELECT topic, user_id FROM topic WHERE = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        const filename = topic.image_url.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
-            ('DELETE FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
-                if (err) throw err;
-                result.status(200).json({ message: 'Méssage supprimé !'});
+        if (userId === topic.user_id) {
+            const filename = topic.image_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+             ('DELETE FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
+                    if (err) throw err;
+                    result.status(200).json({ message: 'Méssage supprimé !'});
+                });
             });
-        });
+        } else {
+            result.status(401).json({ err: new Error ('Requête invalide')});
+        };
+    });
+};
+
+exports.adminDeleteTopic = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE = ?', userId, function(err, result, field) {
+        if (err) throw err;
+        if (user.isadmin === 0) {
+            result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            const filename = topic.image_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+             ('DELETE FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
+                    if (err) throw err;
+                    result.status(200).json({ message: 'Méssage supprimé !'});
+                });
+            });
+        };
     });
 };
 
@@ -115,21 +141,49 @@ exports.modifyComment = (req, res, next) => {
         ] } : { record = [
             comment = escape(req.body.comment)
         ] };
-    connection.query('UPDATE comment SET = ? WHERE = ?', [record], req.params.id, function(err, result, field) {
+    connection.query('SELECT user_id FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        result.status(200).json({ message: 'Commentaire modifié !'});
+        if (userId === comment.user_id) {
+            connection.query('UPDATE comment SET = ? WHERE = ?', [record], req.params.id, function(err, result, field) {
+                if (err) throw err;
+                result.status(200).json({ message: 'Commentaire modifié !'});
+            });
+        } else {
+            result.status(401).json({ err: new Error ('Requête invalide !')});
+        };
     });
 };
 
 exports.deleteComment = (req, res, next) => {
-    connection.query('SELECT comment FROM comment WHERE id = ?', req.params.id, function(err, result, field){
+    connection.query('SELECT comment, user_id FROM comment WHERE id = ?', req.params.id, function(err, result, field){
         if (err) throw err;
-        const filename = comment.image_url.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
-            ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
-                if (err) throw err;
-                result.status(200).json({ message: 'Commentaire supprimé !'});
+        if (userId === comment.user_id) {
+            const filename = comment.image_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
+                    if (err) throw err;
+                    result.status(200).json({ message: 'Commentaire supprimé !'});
+                });
             });
-        });
+        } else {
+            result.status(401).json({ err: new Error ('Requête invalide !')});
+        };
+    });
+};
+
+exports.adminDeleteComment = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', userId, function(err, result, field) {
+        if (err) throw err;
+        if (isadmin === 0) {
+            result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            const filename = comment.image_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
+                    if (err) throw err;
+                    result.status(200).json({ message: 'Commentaire supprimé !'});
+                });
+            });
+        };
     });
 };

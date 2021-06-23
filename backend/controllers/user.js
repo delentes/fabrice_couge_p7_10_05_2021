@@ -98,8 +98,8 @@ exports.getAllUser = (req, res, next) => {
 exports.adminDeleteUser = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        else if (isadmin == 0){
-            result.status(401).json({ err: 'Vous n\'avez pas les droits d\'administration'});
+        if (user.isadmin === 0){
+            result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administration'});
         } else {
             ('DELETE FROM user WHERE id = ?',req.body.id, function(err, result, field){
                 if (err) throw err;
