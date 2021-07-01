@@ -123,7 +123,7 @@ exports.topicLike = (req, res, next) => {
 
 // Comment management
 exports.createComment = (req, res, next) => {
-    let record = [
+    const record = [
         comment = escape(req.body.comment),
         image_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     ];
@@ -174,7 +174,7 @@ exports.deleteComment = (req, res, next) => {
 exports.adminDeleteComment = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', userId, function(err, result, field) {
         if (err) throw err;
-        if (isadmin === 0) {
+        if (user.isadmin === 0) {
             result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
         } else {
             const filename = comment.image_url.split('/images/')[1];
