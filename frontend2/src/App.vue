@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <div id="nav">
-      <router-link to="/">Acceuil</router-link> |
-      <router-link to="/Profile">Vos infos</router-link> |
-      <router-link to="/login">Se connecter</router-link>
-    </div>
-    <router-view/>
+<div>
+  <div id="nav">
+    <router-link to="/">Acceuil</router-link> |
+    <router-link to="/Sign-up">S'enregistrer</router-link> |
+    <router-link to="/login">Se connecter</router-link>
   </div>
+  <router-view/>
+</div>
 </template>
 
 <style lang="scss">

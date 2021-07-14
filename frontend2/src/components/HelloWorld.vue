@@ -1,20 +1,32 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <div v-for="response in responses" v-bind:key="response.id">
-      <h4>{{response.title}}</h4>
-      <p>{{response.topic}}</p>
-      <img :src="reponse.imageUrl">
-    </div>
+      <div v-for ="response in responses" v-bind:key="response.id">
+        <h4>{{titleTopic}}</h4>
+        <p>{{topic}}</p>
+        <img src = {{ image }}>
+        <p>{{nom}}{{prenom}}</p>
+        <p>{{date}}</p>
+      </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'Home',
   props: {
     msg: String
   },
+/*  data: function () {
+    return {
+      titleTopic = response.title,
+      topic = response.topic,
+      image = response.image_url,
+      nom = response.lastname,
+      prenom = response.firstname,
+      date = response.creation_date,
+    }
+  },*/
   methods: {
     topic: async function () {
       try {
@@ -30,6 +42,7 @@ export default {
     }
   },
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

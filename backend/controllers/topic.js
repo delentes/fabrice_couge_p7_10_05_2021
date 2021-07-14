@@ -10,10 +10,6 @@ const connection = mysql.createConnection({
     database: 'groupomania'
 });
 
-const token = req.headers.authorization.split(' ')[1];
-const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-const userId = decodedToken.userId;
-
 // Topic management
 exports.createTopic = (req, res, next) => {
     let record = [
@@ -41,20 +37,20 @@ exports.getOneTopic = (req, res, next) => {
     });
 };
 
-exports.modifyTopic = (req, req, next) => {
+exports.modifyTopic = (req, res, next) => {
     const topicObject = req.file ?
-        { record = [
-            title = escape(req.body.title),
-            topic = escape(req.body.topic),
-            image_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        ] } : { record = [
-            title = escape(req.body.title),
-            topic = escape(req.body.topic)
-        ]};
+        {
+            title: escape(req.body.title),
+            topic: escape(req.body.topic),
+            image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            title: escape(req.body.title),
+            topic: escape(req.body.topic)
+        };
     connection.query('SELECT user_id FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
         if (userId === topic.user_id) {
-            ('UPDATE topic SET = ? WHERE = ?', [record] , req.params.id, function(err, result, field) {
+            ('UPDATE topic SET = ? WHERE = ?', topicObject , req.params.id, function(err, result, field) {
                 if (err) throw err
                 result.status(200).json({ message: 'Méssage modifié !'});
             });
@@ -67,6 +63,9 @@ exports.modifyTopic = (req, req, next) => {
 exports.deleteTopic = (req, res, next) => {
     connection.query('SELECT topic, user_id FROM topic WHERE = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+        const userId = decodedToken.userId;
         if (userId === topic.user_id) {
             const filename = topic.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
@@ -135,12 +134,12 @@ exports.createComment = (req, res, next) => {
 
 exports.modifyComment = (req, res, next) => {
     const commentObject = req.file ? 
-        { record = [
-            comment = escape(req.body.comment),
-            image_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        ] } : { record = [
-            comment = escape(req.body.comment)
-        ] };
+        {
+            comment: escape(req.body.comment),
+            image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            comment: escape(req.body.comment)
+        };
     connection.query('SELECT user_id FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
         if (userId === comment.user_id) {
@@ -157,6 +156,9 @@ exports.modifyComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
     connection.query('SELECT comment, user_id FROM comment WHERE id = ?', req.params.id, function(err, result, field){
         if (err) throw err;
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+        const userId = decodedToken.userId;
         if (userId === comment.user_id) {
             const filename = comment.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {

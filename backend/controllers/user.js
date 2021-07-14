@@ -87,6 +87,21 @@ exports.deleteUser = (req, res, next) => {
     }    
 };
 
+exports.getOneUser = (req, res, next) => {
+    connection.query('SELECT id FROM user', function(err, result, field) {
+        if (err) throw err;
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+        const userId = decodedToken.userId;
+        if (userId === user.id) {
+            connection.query('SELECT * FROM user WHERE id = ?', res.body.id, function(err, result, field) {
+                if (err) throw err;
+                result.status(200).json(user)
+            });
+        }
+    }); 
+};
+
 // Admin management
 exports.getAllUser = (req, res, next) => {
     connection.query('SELECT id, lastname, firstname FROM user ORDER BY creation_date DESC', function(err, result, field) {
@@ -101,7 +116,7 @@ exports.adminDeleteUser = (req, res, next) => {
         if (user.isadmin === 0){
             result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administration'});
         } else {
-            ('DELETE FROM user WHERE id = ?',req.body.id, function(err, result, field){
+            ('DELETE FROM user WHERE id = ?', req.body.id, function(err, result, field){
                 if (err) throw err;
                 result.status(200).json({ message: 'Utilisateur supprimé !'})
             });

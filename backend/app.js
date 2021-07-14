@@ -4,6 +4,7 @@ const helmet = require('helmet')
 const limiter = require('./middleware/rateLimit-config')
 
 const userRoutes = require('./routes/user');
+const topicRoutes = require('./routes/topic');
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use(limiter);
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/auth', userRoutes);
+app.use('/api/topics', topicRoutes);
 
 module.exports = app;
