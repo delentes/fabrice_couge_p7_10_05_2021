@@ -2,14 +2,14 @@
     <div class="card">
         <h1 class="card__title" v-if="mode == 'login'">Connection</h1>
         <h1 class="card__title" v-else>Inscription</h1>
-        <p class="card__subtitle" v-if="mode == 'login'">Pas encore de compte ? <span class="card__action" @click="switchToCreateAccount()">Créer un compte</span></p>
-        <p class="card__subtitle" v-else>Tu as déjà un compte ?<span class="card__action" @click="switchToLogin"></span>Se connecter</p>
+        <p class="card__subtitle" v-if="mode == 'login'">Pas encore de compte ? <a class="card__action" @click="switchToCreateAccount()">céer un compte</a></p>
+        <p class="card__subtitle" v-else>Tu as déjà un compte ? <a class="card__action" @click="switchToLogin()">connecter</a></p>
         <div class="form-row">
             <input v-model="email" class="form-row__input" type="email" placeholder="Adresse mail">
         </div>
         <div class="form-row" v-if="mode == 'create'">
             <input v-model="prenom" class="form-row__input" type="text" placeholder="Prénom">
-            <input v-model="npm" class="form-row__input" type="text" placeholder="Nom">
+            <input v-model="nom" class="form-row__input" type="text" placeholder="Nom">
         </div>
         <div class="form-row">
             <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe">
@@ -21,13 +21,14 @@
             Adresse mail déjà utilisée
         </div>
         <div class="form-row">
-            <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
+            <button @click="login" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
                 <span v-if="status == 'loading'">Connexion en cours...</span>
                 <span v-else>Connexion</span>
             </button>
-            <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" v-else>Créer un compte</button>
-            <span v-if="status == 'loading'">Création en cours...</span>
-            <span v-else>Créer un compte</span>
+            <button @click="createAccount" class="button" :class="{'button--disabled' : !validatedFields}" v-else>
+                <span v-if="status == 'loading'">Création en cours...</span>
+                <span v-else>Créer un compte</span>
+            </button>
         </div>
     </div>
 </template>
@@ -46,7 +47,7 @@ export default {
         }
     },
     mounted: function () {
-       if (this.$store.state.userId != -1) {
+       if (this.$store.state.user.userId != -1) {
         this.$router.push('/profile');
         return;
     } 
@@ -82,7 +83,7 @@ export default {
                 email: this.email,
                 prenom: this.prenom,
                 nom: this.nom,
-                password: this.password,
+                password: this.password
             }).then(function () {
                 self.login();
             }), function (error) {
@@ -95,12 +96,12 @@ export default {
                 email: this.email,
                 password: this.password,
             }).then(function () {
-                self.$router.puch('/profile');
+                self.$router.puch('/');
             }), function (error) {
                 console.log(error);
             }
         },
-    }
+    },
 }
 </script>
 

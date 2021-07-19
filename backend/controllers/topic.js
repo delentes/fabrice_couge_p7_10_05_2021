@@ -63,10 +63,7 @@ exports.modifyTopic = (req, res, next) => {
 exports.deleteTopic = (req, res, next) => {
     connection.query('SELECT topic, user_id FROM topic WHERE = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        const userId = decodedToken.userId;
-        if (userId === topic.user_id) {
+        if (req.body.decodedToken.userId === topic.user_id) {
             const filename = topic.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
              ('DELETE FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
@@ -156,10 +153,7 @@ exports.modifyComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
     connection.query('SELECT comment, user_id FROM comment WHERE id = ?', req.params.id, function(err, result, field){
         if (err) throw err;
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        const userId = decodedToken.userId;
-        if (userId === comment.user_id) {
+        if (req.body.decodedToken.userId === comment.user_id) {
             const filename = comment.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
                 ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {

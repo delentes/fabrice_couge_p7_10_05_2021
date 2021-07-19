@@ -2,7 +2,7 @@
   <div>
     <div id="nav">
       <router-link to="/">Acceuil</router-link> |
-      <router-link to="/Profile">Vos infos</router-link> |
+      <router-link to="/profile">Vos infos</router-link> |
       <router-link to="/login">Se connecter</router-link>
     </div>
     <router-view/>
@@ -19,15 +19,77 @@
 }
 
 #nav {
-  padding: 30px;
+#app {
+  max-width: 100%;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+body {
+  background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding:32px;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.card {
+  max-width: 100%;
+  width: 540px;
+  background:white;
+  border-radius: 16px;
+  padding:32px;
+}
+
+.card__title {
+  text-align:center;
+  font-weight: 800;
+}
+
+.card__subtitle {
+  text-align: center;
+  color:#666;
+  font-weight: 500;
+}
+
+  .button {
+    background: #2196F3;
+    color:white;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+    width: 100%;
+    padding: 16px;
+    transition: .4s background-color;
   }
+
+  .card__action {
+    color:#2196F3;
+    text-decoration: underline;
+  }
+
+  .card__action:hover {
+    cursor:pointer;
+  }
+
+  .button:hover {
+    cursor:pointer;
+    background: #1976D2;
+  }
+
+  .button--disabled {
+    background:#cecece;
+    color:#ececec
+  }
+  .button--disabled:hover {
+    cursor:not-allowed;
+    background:#cecece;
+  }
+
 }
 </style>

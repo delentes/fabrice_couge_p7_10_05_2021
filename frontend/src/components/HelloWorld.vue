@@ -1,10 +1,8 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <div v-for="response in responses" v-bind:key="response.id">
-      <h4>{{response.title}}</h4>
-      <p>{{response.topic}}</p>
-      <img :src="reponse.imageUrl">
+    <div>
+      
     </div>
   </div>
 </template>
@@ -16,23 +14,12 @@ export default {
     msg: String
   },
   methods: {
-    topic: async function () {
-      try {
-        let responses = await fetch('https://localhost:3000/api/');
-        if (!responses.ok) {
-          throw new Error (`Erreur HTTP ! statut: ${responses.status}`);
-        }
-        return await responses.json();
-      }
-      catch(e) {
-        console.log(e);
-      }
-    }
-  },
+    
+  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped lang="scss">
 h3 {
   margin: 40px 0 0;

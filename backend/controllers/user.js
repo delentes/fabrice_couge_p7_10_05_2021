@@ -71,10 +71,7 @@ exports.login = (req, res, next) => {
 
 exports.deleteUser = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        const userId = decodedToken.userId;
-        if (req.body.userId && req.body.userId !== userId) {
+        if (req.body.decodedToken.userId && req.body.decodedToken.userId !== user.id) {
             throw 'Identifiant invalide';
         } else {
             connection.query('DELETE FROM user WHERE id = ?', userId, function(err, result, field) {
@@ -90,10 +87,7 @@ exports.deleteUser = (req, res, next) => {
 exports.getOneUser = (req, res, next) => {
     connection.query('SELECT id FROM user', function(err, result, field) {
         if (err) throw err;
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        const userId = decodedToken.userId;
-        if (userId === user.id) {
+        if (req.body.decodedToken.userId === user.id) {
             connection.query('SELECT * FROM user WHERE id = ?', res.body.id, function(err, result, field) {
                 if (err) throw err;
                 result.status(200).json(user)
