@@ -8,8 +8,8 @@
             <input v-model="email" class="form-row__input" type="email" placeholder="Adresse mail">
         </div>
         <div class="form-row" v-if="mode == 'create'">
-            <input v-model="prenom" class="form-row__input" type="text" placeholder="Prénom">
-            <input v-model="nom" class="form-row__input" type="text" placeholder="Nom">
+            <input v-model="firstname" class="form-row__input" type="text" placeholder="Prénom">
+            <input v-model="lastname" class="form-row__input" type="text" placeholder="Nom">
         </div>
         <div class="form-row">
             <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe">
@@ -21,11 +21,11 @@
             Adresse mail déjà utilisée
         </div>
         <div class="form-row">
-            <button @click="login" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
+            <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
                 <span v-if="status == 'loading'">Connexion en cours...</span>
                 <span v-else>Connexion</span>
             </button>
-            <button @click="createAccount" class="button" :class="{'button--disabled' : !validatedFields}" v-else>
+            <button @click="createAccount()" class="button" :class="{'button--disabled' : !validatedFields}" v-else>
                 <span v-if="status == 'loading'">Création en cours...</span>
                 <span v-else>Créer un compte</span>
             </button>
@@ -41,8 +41,8 @@ export default {
         return {
             mode: 'login',
             email: '',
-            prenom: '',
-            nom: '',
+            firstname: '',
+            lastname: '',
             password: '',
         }
     },
@@ -55,7 +55,7 @@ export default {
     computed: {
         validatedFields: function () {
             if (this.mode == 'create') {
-                if (this.email != "" && this.prenom != "" && this.nom != "" && this.password != "") {
+                if (this.email != "" && this.firstname != "" && this.lastname != "" && this.password != "") {
                     return true;
                 } else {
                     return false;
@@ -77,12 +77,13 @@ export default {
         switchToLogin: function () {
             this.mode = 'login';
         },
-        creatAccount: function () {
+        createAccount: function () {
             const self = this;
+            console.log('test');
             this.$store.dispatch('createAccount', {
+                lastname: this.lastname,
+                firstname: this.firstname,
                 email: this.email,
-                prenom: this.prenom,
-                nom: this.nom,
                 password: this.password
             }).then(function () {
                 self.login();

@@ -1,24 +1,28 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mysql = require('mysql')
+const mysql = require('mysql');
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    port: '3306',
-    user: 'admin',
-    password: 'admin',
-    database: 'groupomania',
+    host:'localhost',
+    port:'3306',
+    user:'admin',
+    password:'admin',
+    database:'groupomania',
 });
-
+console.log('test2');
 exports.signup = (req, res, next) => {
-
-    if (req.body.lastname == null || req.body.firstname == null || email == null || req.body.password == null) {
+    console.log(req.body);
+    const validEmail = /[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
+    const validPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const verifyEmail = validEmail.test(req.body.email);
+    const verifyPassword = validPassword.test(req.body.password);
+    if (req.body.lastname == null || req.body.firstname == null || req.body.email == null || req.body.password == null) {
         return res.status(400).json({ err: 'Merci de remplir les champs !'})
     }
-    else if (req.body.email != /[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/) {
+    else if (verifyEmail != true ) {
         return res.status(400).json({ err: 'merci de saisir une adresse email valide !'})
     } 
-    else if (req.body.password != /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/){
+    else if (verifyPassword != true ){
         return res.status(400).json({ err: 'Merci de saisir un mot de passe avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial'})
     }
     else {
@@ -30,10 +34,11 @@ exports.signup = (req, res, next) => {
                 let record = [
                     lastname = mysql.escape(req.body.lastname),
                     firstname = mysql.escape(req.body.firstname),
-                    email = mysql.escape(email),
+                    email = mysql.escape(req.body.email),
                     password = hash,
                     isadmin = 0,
                 ];
+                console.log(record);
                 ('INSERT INTO user VALUE = ?', [record], function(err, result, field) {
                     if (err) throw err;
                     else result.status(201).json({ message: 'Utilisateur créé !'});

@@ -29,20 +29,11 @@ export default createStore({
     status: '',
     user: user,
     userInfos: {
-      nom: '',
-      prenom: '',
+      lastname: '',
+      firsname: '',
       email: '',
       password:'',
-      isadmin: '',
     },
-    topic: {
-      topic_title: '',
-      topic: '',
-      image_url: '',
-      nom: '',
-      prenom: '',
-      topic_creation_date: '',
-    }
   },
   mutations: {
     setStatus: function (state, status) {
@@ -84,9 +75,9 @@ export default createStore({
     createAccount: ({commit}, userInfos) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
-        commit;
-        instance.post('/signup', userInfos)
+        instance.post('/auth/signup', userInfos)
         .then(function (response) {
+          console.log(userInfos);
           commit('setStatus', 'created');
           resolve(response);
         })
@@ -105,16 +96,6 @@ export default createStore({
           console.log(error);
         });
     },
-    getTopics: ({commit}, topic) => {
-      instance.get('/', topic)
-      .then(function (response) {
-        console.log(response)
-        commit('topic', response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    }
   },
   modules: {
   }
