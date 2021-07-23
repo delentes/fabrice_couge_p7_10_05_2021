@@ -9,9 +9,8 @@ const connection = mysql.createConnection({
     password:'admin',
     database:'groupomania',
 });
-console.log('test2');
+
 exports.signup = (req, res, next) => {
-    console.log(req.body);
     const validEmail = /[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
     const validPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const verifyEmail = validEmail.test(req.body.email);
@@ -26,62 +25,56 @@ exports.signup = (req, res, next) => {
         return res.status(400).json({ err: 'Merci de saisir un mot de passe avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial'})
     }
     else {
-        connection.query(function(err, result, field){
-            if (err) throw err;
-            
-            bcrypt.hash(req.body.password, 10)
+        bcrypt.hash(req.body.password, 10)
             .then(hash => {
-                let record = [
-                    lastname = mysql.escape(req.body.lastname),
-                    firstname = mysql.escape(req.body.firstname),
-                    email = mysql.escape(req.body.email),
-                    password = hash,
-                    isadmin = 0,
-                ];
-                console.log(record);
-                ('INSERT INTO user VALUE = ?', [record], function(err, result, field) {
-                    if (err) throw err;
-                    else result.status(201).json({ message: 'Utilisateur créé !'});
-                })
-            })
-            .catch(err => result.status(500).json({ err }));
-        })
-    }
+                const record = {
+                    lastname: req.body.lastname,
+                    firstname: req.body.firstname,
+                    email: req.body.email,
+                    password: hash,
+            }
+        connection.query('INSERT INTO user SET ?', record, function(err, result, field) {
+            if (err) throw err;
+                res.status(201).json({ message: 'Utilisateur créé !'});
+            });
+        });
+    };
 };
 
 exports.login = (req, res, next) => {
-    connection.query('SELECT * FROM user WHERE email = ?', req.body.email, function(err, result, field) {
+    const email = req.body.email;
+    const password = req.body.password;
+    connection.query('SELECT * FROM user WHERE email = ?', [email], function(err, result, field) {
         if (err) throw err;
-        else if (!user) 
-            return result.status(401).json({ err: 'Utilisateur non trouvé !'});
+        else if (!req.body.email) 
+            return res.status(401).json({ err: 'Utilisateur non trouvé !'});
         else {
-            bcrypt.compare(req.body.password, user.password)
+            bcrypt.compare(password, result[0].password)
             .then(valid => {
                 if (!valid) {
-                    return result.status(401).json({ err: 'Mot de passe incorrect !'});
+                    return res.status(401).json({ err: 'Mot de passe incorrect !'});
                 }
-                result.status(200).json({
-                    userId: user._id,
+                res.status(200).json({
                     token: jwt.sign(
-                        { userId: user._id },
+                        { userId: result[0].id },
                         'RANDOM_SECRET_TOKEN',
                         {expiresIn: '24h'}
                     )
                 });
             })
-            .catch(err => result.status(500).json({ err }));
+            .catch(err => res.status(500).json({ err }));
         };
     });
 };
 
 exports.deleteUser = (req, res, next) => {
     try {
-        if (req.body.decodedToken.userId && req.body.decodedToken.userId !== user.id) {
+        if (req.body.decodedToken && req.body.decodedToken.userId !== user.id) {
             throw 'Identifiant invalide';
         } else {
             connection.query('DELETE FROM user WHERE id = ?', userId, function(err, result, field) {
                 if (err) throw err;
-                result.status(200).json({ message: 'Utilisateur supprimé !'})
+                res.status(200).json({ message: 'Utilisateur supprimé !'})
             });
         }
     } catch {
@@ -92,10 +85,11 @@ exports.deleteUser = (req, res, next) => {
 exports.getOneUser = (req, res, next) => {
     connection.query('SELECT id FROM user', function(err, result, field) {
         if (err) throw err;
-        if (req.body.decodedToken.userId === user.id) {
-            connection.query('SELECT * FROM user WHERE id = ?', res.body.id, function(err, result, field) {
+        console.log(result)
+        if (req.body.decodedToken === result[0].id) {
+            connection.query('SELECT * FROM user WHERE id = ?', req.body.decodedToken, function(err, result, field) {
                 if (err) throw err;
-                result.status(200).json(user)
+                res.send(data);
             });
         }
     }); 
@@ -103,9 +97,10 @@ exports.getOneUser = (req, res, next) => {
 
 // Admin management
 exports.getAllUser = (req, res, next) => {
-    connection.query('SELECT id, lastname, firstname FROM user ORDER BY creation_date DESC', function(err, result, field) {
+    connection.query('SELECT id, lastname, firstname, email, password FROM user', function(err, result, field) {
         if (err) throw err;
-        result.status(200).json(users)
+        console.log(result)
+        res.status(200).json(result)
     });
 };
 
@@ -113,11 +108,11 @@ exports.adminDeleteUser = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
         if (user.isadmin === 0){
-            result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administration'});
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administration'});
         } else {
             ('DELETE FROM user WHERE id = ?', req.body.id, function(err, result, field){
                 if (err) throw err;
-                result.status(200).json({ message: 'Utilisateur supprimé !'})
+                res.status(200).json({ message: 'Utilisateur supprimé !'})
             });
         }
     });

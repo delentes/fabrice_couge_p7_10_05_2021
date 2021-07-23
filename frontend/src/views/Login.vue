@@ -79,7 +79,6 @@ export default {
         },
         createAccount: function () {
             const self = this;
-            console.log('test');
             this.$store.dispatch('createAccount', {
                 lastname: this.lastname,
                 firstname: this.firstname,
@@ -97,7 +96,7 @@ export default {
                 email: this.email,
                 password: this.password,
             }).then(function () {
-                self.$router.puch('/');
+                self.$router.push('/');
             }), function (error) {
                 console.log(error);
             }

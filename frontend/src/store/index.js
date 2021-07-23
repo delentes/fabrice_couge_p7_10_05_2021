@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 
+
 const axios = require('axios');
 
 const instance = axios.create({
@@ -40,8 +41,8 @@ export default createStore({
       state.status = status;
     },
     logUser: function (state, user) {
-      instance.default.headers.common['Authorization'] = user.token;
-      localStorage.setItem('user', JSON.stringify(user));
+      instance.defaults.headers.common['Authorization'] = user.token;
+      localStorage.setItem('userId', JSON.stringify(user));
       state.user = user;
     },
     userInfos: function (state, userInfos) {
@@ -59,12 +60,11 @@ export default createStore({
     login: ({commit}, userInfos) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
-        instance.post('/login', userInfos)
+        instance.post('/auth/login', userInfos)
         .then(function (response) {
           commit('setStatus', '');
           commit('logUser', response.data);
           resolve(response);
-          console.log(response);
         })
         .catch(function (error) {
           commit('setStatus', 'error_login');
@@ -87,14 +87,18 @@ export default createStore({
         });
       });
     },
-    getUserInfos: ({commit}, userInfos) => {
-      instance.get('/profile/:id', userInfos)
+    getUserInfos: ({commit}) => {
+      return new Promise((resolve,reject) => {
+        instance.post('/auth/profile/:id')
         .then(function (response) {
           commit('userInfos', response.data.infos);
+          resolve(response);
         })
         .catch(function (error) {
           console.log(error);
+          reject(error);
         });
+      })
     },
   },
   modules: {
