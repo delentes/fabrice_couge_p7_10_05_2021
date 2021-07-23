@@ -44,7 +44,7 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    connection.query('SELECT * FROM user WHERE email = ?', [email], function(err, result, field) {
+    connection.query('SELECT * FROM user WHERE email = ?', email, function(err, result, field) {
         if (err) throw err;
         else if (!req.body.email) 
             return res.status(401).json({ err: 'Utilisateur non trouvé !'});
@@ -85,13 +85,11 @@ exports.deleteUser = (req, res, next) => {
 exports.getOneUser = (req, res, next) => {
     connection.query('SELECT id FROM user', function(err, result, field) {
         if (err) throw err;
-        console.log(result)
-        if (req.body.decodedToken === result[0].id) {
-            connection.query('SELECT * FROM user WHERE id = ?', req.body.decodedToken, function(err, result, field) {
+        else (req.body.userId === result[0].id) 
+            connection.query('SELECT * FROM user WHERE id = ?', req.body.userId, function(err, result, field) {
                 if (err) throw err;
                 res.send(data);
             });
-        }
     }); 
 };
 

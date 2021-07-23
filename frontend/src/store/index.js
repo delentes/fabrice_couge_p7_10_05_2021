@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
 
-
 const axios = require('axios');
 
 const instance = axios.create({
@@ -16,7 +15,7 @@ if (!user) {
 } else {
   try {
     user = JSON.parse(user);
-    instance.default.headers.common['Authorization'] = user.token;
+    instance.default.headers.common['Authorization'] = `bearer ${localStorage.token}`;
   } catch (ex) {
     user = {
       userId: -1,
@@ -41,8 +40,9 @@ export default createStore({
       state.status = status;
     },
     logUser: function (state, user) {
-      instance.defaults.headers.common['Authorization'] = user.token;
-      localStorage.setItem('userId', JSON.stringify(user));
+      localStorage.setItem('user',JSON.stringify(user));
+      localStorage.setItem('token', user.token);
+      localStorage.setItem('userId', JSON.stringify(user.userId));
       state.user = user;
     },
     userInfos: function (state, userInfos) {
@@ -77,7 +77,6 @@ export default createStore({
       return new Promise((resolve, reject) => {
         instance.post('/auth/signup', userInfos)
         .then(function (response) {
-          console.log(userInfos);
           commit('setStatus', 'created');
           resolve(response);
         })
@@ -87,18 +86,16 @@ export default createStore({
         });
       });
     },
-    getUserInfos: ({commit}) => {
-      return new Promise((resolve,reject) => {
-        instance.post('/auth/profile/:id')
+    getUserInfos: ({commit},) => {
+      const getUserID = localStorage.getItem('userID')
+        instance.post('/auth/profile/'+ getUserID)
         .then(function (response) {
-          commit('userInfos', response.data.infos);
-          resolve(response);
+          commit('userInfos', response.data);
         })
         .catch(function (error) {
-          console.log(error);
-          reject(error);
+          console.log(error.response);
         });
-      })
+      
     },
   },
   modules: {
