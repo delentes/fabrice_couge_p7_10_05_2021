@@ -56,13 +56,12 @@ exports.login = (req, res, next) => {
                     return res.status(401).json({ err: 'Mot de passe incorrect !'});
                 }
                 const data = result[0];
-                res.status(200).json({
+                res.status(200).json({data,
                     token: jwt.sign(
                         { userId: result[0].id },
                         'RANDOM_SECRET_TOKEN',
                         {expiresIn: '24h'}
-                    ),
-                    data,
+                    )
                 });
             })
             .catch(err => res.status(500).json({ err: 'Serveur indisponible'}));

@@ -65,7 +65,7 @@ export default createStore({
           commit('setStatus', '');
           commit('logUser', response.data);
           resolve(response);
-
+          console.log(instance.default)
         })
         .catch(function (error) {
           commit('setStatus', 'error_login');
