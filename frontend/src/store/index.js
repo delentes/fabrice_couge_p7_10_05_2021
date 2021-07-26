@@ -15,7 +15,7 @@ if (!user) {
 } else {
   try {
     user = JSON.parse(user);
-    instance.default.headers.common['Authorization'] = `bearer ${localStorage.token}`;
+    instance.default.headers.common['Authorization'] = `${localStorage.token}`;
   } catch (ex) {
     user = {
       userId: -1,
@@ -40,9 +40,9 @@ export default createStore({
       state.status = status;
     },
     logUser: function (state, user) {
-      localStorage.setItem('user',JSON.stringify(user));
+      localStorage.setItem('userInfos',JSON.stringify(user.data));
       localStorage.setItem('token', user.token);
-      localStorage.setItem('userId', JSON.stringify(user.userId));
+      localStorage.setItem('userId', JSON.stringify(user.data.id));
       state.user = user;
     },
     userInfos: function (state, userInfos) {
@@ -65,6 +65,7 @@ export default createStore({
           commit('setStatus', '');
           commit('logUser', response.data);
           resolve(response);
+
         })
         .catch(function (error) {
           commit('setStatus', 'error_login');
@@ -85,17 +86,6 @@ export default createStore({
           reject(error);
         });
       });
-    },
-    getUserInfos: ({commit},) => {
-      const getUserID = localStorage.getItem('userID')
-        instance.post('/auth/profile/'+ getUserID)
-        .then(function (response) {
-          commit('userInfos', response.data);
-        })
-        .catch(function (error) {
-          console.log(error.response);
-        });
-      
     },
   },
   modules: {

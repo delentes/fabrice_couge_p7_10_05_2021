@@ -2,7 +2,10 @@
   <div class="card">
     <h1 class="card__title">Espace perso</h1>
     <p class="card__subtitle">Vos données personnels</p>
-    <p>{{user.firstname}} {{user.lastname}} {{user.email}}</p>
+    <p>Prénom: {{this.$store.state.user.data.firstname}} {{user.email}}</p>
+    <p>Nom: {{this.$store.state.user.data.lastname}}</p>
+    <p>Email: {{this.$store.state.user.data.email}}</p>
+
     <div class="form-row">
       <button @click="logout()" class="button">
         Déconnexion
@@ -19,7 +22,7 @@ export default {
       this.$router.push('/login');
       return;
     }
-    this.$store.dispatch('getUserInfos');
+    this.$store.state.user.data;
   },
   computed: {
     ...mapState({

@@ -9,6 +9,15 @@
   </div>
 </template>
 
+<script>
+export default {
+  name:'App',
+  components: {
+    
+  }
+}
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -18,7 +27,7 @@
   color: #2c3e50;
 }
 
-#nav {
+
 #app {
   max-width: 100%;
 }
@@ -91,5 +100,5 @@ img {
     background:#cecece;
   }
 
-}
+
 </style>

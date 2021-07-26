@@ -84,22 +84,22 @@ export default {
                 firstname: this.firstname,
                 email: this.email,
                 password: this.password
-            }).then(function () {
+            }).then (function () {
                 self.login();
-            }), function (error) {
+            }).catch (function (error) {
                 console.log(error);
-            }
+            })
         },
         login: function () {
             const self = this;
             this.$store.dispatch('login', {
                 email: this.email,
                 password: this.password,
-            }).then(function () {
+            }).then (function () {
                 self.$router.push('/');
-            }), function (error) {
+            }).catch (function (error) {
                 console.log(error);
-            }
+            })
         },
     },
 }
