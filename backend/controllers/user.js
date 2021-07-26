@@ -69,14 +69,26 @@ exports.login = (req, res, next) => {
     });
 };
 
+exports.getOneUser = (req, res, next) => {
+    connection.query('SELECT id FROM user', function(err, result, field) {
+        if (err) throw err;
+        if (req.body.decodedToken.userId === result[0].id) {
+            connection.query('SELECT * FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+                if (err) throw err;
+                result.status(200).json(user)
+            });
+        }
+    }); 
+};
+
 exports.deleteUser = (req, res, next) => {
     try {
-        connection.query('SELECT id FROM user WHERE id = ?', req.body.id, function(err, result, field) {
+        connection.query('SELECT id FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
             if (err) throw err;
-            if (req.body.id && req.body.id !== result[0].id) {
+            if (req.body.decodedToken.userId && req.body.decodedToken.userId !== result[0].id) {
                 throw 'Identifiant invalide';
             } else {
-                connection.query('DELETE FROM user WHERE id = ?', req.body.id, function(err, result, field) {
+                connection.query('DELETE FROM user WHERE id = ?', result[0].id, function(err, result, field) {
                     if (err) throw err;
                     res.status(200).json({ message: 'Utilisateur supprimé !'})
                 });
@@ -90,7 +102,7 @@ exports.deleteUser = (req, res, next) => {
 
 // Admin management
 exports.getAllUser = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.id, function(err, result, field) {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (result[0].isadmin === 0 ){
             res.status(403).json({ message: 'Vous n\'avez pas les droits d\'administration'});
@@ -103,12 +115,12 @@ exports.getAllUser = (req, res, next) => {
 };
 
 exports.adminDeleteUser = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE id = ?', req.params.id, function(err, result, field) {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (user.isadmin === 0){
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administration'});
         } else {
-            connection.query('DELETE FROM user WHERE id = ?', req.body.id, function(err, result, field){
+            connection.query('DELETE FROM user WHERE id = ?', req.params.id, function(err, result, field){
                 if (err) throw err;
                 res.status(200).json({ message: 'Utilisateur supprimé !'});
             });

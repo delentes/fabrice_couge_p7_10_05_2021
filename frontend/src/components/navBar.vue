@@ -4,11 +4,10 @@
             <v-btn :to="home">
                 <span>Acceuil</span>
             </v-btn>
-            <div v-if="status = ''">
-                <v-btn :to="login">
-                    <span>Se Connecter</span>
-                </v-btn>
-            </div>
+            <v-btn :to="login">
+                <span>Se Connecter</span>
+            </v-btn>
+
             <v-btn :to="profile" >
                 <span>votre profile</span>
             </v-btn>
@@ -17,17 +16,13 @@
     
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
     name: 'navBar',
     data: () => ({
         home:"/",
         login: "/login",
-        Profile: "/profile"
+        profile: "/profile"
     }),
-    computed: {
-        ...mapState(['status'])
-    }
 }
 
 </script>

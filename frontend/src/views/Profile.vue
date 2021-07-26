@@ -2,13 +2,16 @@
   <div class="card">
     <h1 class="card__title">Espace perso</h1>
     <p class="card__subtitle">Vos données personnels</p>
-    <p>Prénom: {{this.$store.state.user.data.firstname}} {{user.email}}</p>
+    <p>Prénom: {{this.$store.state.user.data.firstname}}</p>
     <p>Nom: {{this.$store.state.user.data.lastname}}</p>
     <p>Email: {{this.$store.state.user.data.email}}</p>
 
     <div class="form-row">
       <button @click="logout()" class="button">
         Déconnexion
+      </button>
+      <button @click="deleteAccount" class="button__delete">
+        Supprimé le compte
       </button>
     </div>
   </div>
@@ -32,8 +35,11 @@ export default {
   methods: {
     logout: function () {
       this.$store.commit('logout');
-      this.$router.push('/');
-    }
+      this.$router.push('/login');
+    },
+    deleteAccount: function () {
+      this.$store.dispatch('deleteAccount');
+    },
   }
 }
 </script>

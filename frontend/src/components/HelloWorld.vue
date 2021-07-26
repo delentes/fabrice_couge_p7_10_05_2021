@@ -14,7 +14,6 @@ export default {
     msg: String
   },
   methods: {
-    
   }
 }
 </script>

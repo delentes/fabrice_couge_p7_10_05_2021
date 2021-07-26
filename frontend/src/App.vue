@@ -1,19 +1,20 @@
 <template>
   <div>
     <div id="nav">
-      <router-link to="/">Acceuil</router-link> |
-      <router-link to="/profile">Vos infos</router-link> |
-      <router-link to="/login">Se connecter</router-link>
+      <nav-bar></nav-bar>
     </div>
     <router-view/>
   </div>
 </template>
 
 <script>
+
+import navBar from "@/component/navBar.vue";
+
 export default {
   name:'App',
   components: {
-    
+    navBar
   }
 }
 </script>
@@ -67,6 +68,18 @@ img {
 
   .button {
     background: #2196F3;
+    color:white;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+    width: 100%;
+    padding: 16px;
+    transition: .4s background-color;
+  }
+
+  .button__delete {
+    background-color: red;
     color:white;
     border-radius: 8px;
     font-weight: 800;
