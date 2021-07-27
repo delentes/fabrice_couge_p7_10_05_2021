@@ -1,16 +1,9 @@
 <template>
     <nav>
         <v-app-bar>
-            <v-btn :to="home">
-                <span>Acceuil</span>
-            </v-btn>
-            <v-btn :to="login">
-                <span>Se Connecter</span>
-            </v-btn>
-
-            <v-btn :to="profile" >
-                <span>votre profile</span>
-            </v-btn>
+            <router-link to = "/">Acceuil</router-link> |
+            <router-link to = "/login">Se connecter</router-link> |
+            <router-link to = "/profile">Vos info</router-link>
         </v-app-bar>
     </nav>
     
@@ -18,11 +11,7 @@
 <script>
 export default {
     name: 'navBar',
-    data: () => ({
-        home:"/",
-        login: "/login",
-        profile: "/profile"
-    }),
+    
 }
 
 </script>

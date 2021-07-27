@@ -9,7 +9,7 @@
 
 <script>
 
-import navBar from "@/component/navBar.vue";
+import navBar from "@/components/navBar.vue";
 
 export default {
   name:'App',
@@ -112,6 +112,18 @@ img {
     cursor:not-allowed;
     background:#cecece;
   }
+  .button__delete:hover {
+      cursor:pointer;
+      background: #9e0e40;
+    }
 
+    .button--disabled {
+      background:#cecece;
+      color:#ececec
+    }
+    .button--disabled:hover {
+      cursor:not-allowed;
+      background:#cecece;
+    }
 
 </style>
