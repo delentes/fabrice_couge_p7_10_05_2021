@@ -17,6 +17,11 @@ const routes = [
     name: 'Login',
     component: () => import('../views/Login.vue')
   },
+  {
+    path: '/postTopic',
+    name: 'PostTopic',
+    component: () => import('../views/CreateTopic.vue')
+  },
 ]
 
 const router = createRouter({

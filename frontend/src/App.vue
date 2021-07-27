@@ -117,13 +117,4 @@ img {
       background: #9e0e40;
     }
 
-    .button--disabled {
-      background:#cecece;
-      color:#ececec
-    }
-    .button--disabled:hover {
-      cursor:not-allowed;
-      background:#cecece;
-    }
-
 </style>

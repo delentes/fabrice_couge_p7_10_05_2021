@@ -41,7 +41,7 @@ export default createStore({
     },
     logUser: function (state, user) {
       state.user = user;
-      localStorage.setItem('user', JSON.stringify(user.data));
+      localStorage.setItem('user', JSON.stringify(user));
       instance.defaults.headers.common['Authorization'] = user.token;
     },
     userInfos: function (state, userInfos) {
@@ -113,7 +113,21 @@ export default createStore({
         });
       });
     },
+    createTopic: ({commit}, ) => {
+      commit();
+      return new Promise((resolve, reject) => {
+        instance.post('topic/create')
+        .then(function (response) {
+          commit('topicStatus', 'topicCreate');
+          resolve(response);
+        }).catch(function(error) {
+          commit('topicStatus', 'error_createTopic');
+          reject(error);
+        })
+      })
+    }
   },
+
   modules: {
   }
 })
