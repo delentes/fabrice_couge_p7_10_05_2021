@@ -30,6 +30,13 @@ export default {
             image_url: '',
         }
     },
+    mounted: function () {
+    if (this.$store.state.user.userId == -1) {
+      this.$router.push('/login');
+      return;
+    }
+    
+  },
     computed:{
         validatedFields: function() {
             if (this.title != "" && this.topic != "") {
@@ -46,13 +53,15 @@ export default {
                 title: this.title,
                 topic: this.topic,
                 image_url: this.image_url,
-            }).then(function() {
+            })
+            .then(function() {
                 self.$router.push('/');
-            }).catch(function(error) {
+            })
+            .catch(function(error) {
                 console.log(error);
-            });
-        }
-    },
+                    });
+                }
+            },
 }
 </script>
 

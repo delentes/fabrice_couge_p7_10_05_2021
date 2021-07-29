@@ -6,8 +6,6 @@ const instance = axios.create({
   baseURL: 'http://localhost:3000/api'
 });
 
-
-
 let user = localStorage.getItem('user');
 if (!user) {
   user = {
@@ -106,10 +104,9 @@ export default createStore({
       });
     },
     getTopics: ({commit}, topic) => {
-      instance.get('/', topic)
+      instance.get('/topics/topic', topic)
       .then(function (response) {
-          console.log(response)
-          commit('topic', response.data);
+          commit('topicStatus', response.data);
       })
       .catch(function (error) {
           console.log(error);

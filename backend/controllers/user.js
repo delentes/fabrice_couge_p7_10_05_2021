@@ -47,7 +47,7 @@ exports.login = (req, res, next) => {
     const password = req.body.password;
     connection.query('SELECT * FROM user WHERE email = ?', [email], function(err, result, field) {
         if (err) throw err;
-        else if (!req.body.email) 
+        else if (email != result[0].email) 
             return res.status(401).json({ err: 'Utilisateur non trouvé !'});
         else {
             bcrypt.compare(password, result[0].password)
