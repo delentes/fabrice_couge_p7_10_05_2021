@@ -2,9 +2,9 @@
   <div class="card">
     <h1 class="card__title">Espace perso</h1>
     <p class="card__subtitle">Vos données personnels</p>
-    <p>Prénom: {{this.$store.state.user.data.firstname}}</p>
-    <p>Nom: {{this.$store.state.user.data.lastname}}</p>
-    <p>Email: {{this.$store.state.user.data.email}}</p>
+    <p>Prénom: {{user.firstname}}</p>
+    <p>Nom: {{user.lastname}}</p>
+    <p>Email: {{user.email}}</p>
 
     <div class="form-row">
       <button @click="logout()" class="button">
@@ -21,11 +21,11 @@ import { mapState } from 'vuex';
 export default {
   name:'profile',
   mounted: function () {
-    if (this.$store.state.userId == -1) {
+    if (this.$store.state.user.userId == -1) {
       this.$router.push('/login');
       return;
     }
-    this.$store.state.user.data;
+    this.$store.dispatch('getUserInfos');
   },
   computed: {
     ...mapState({

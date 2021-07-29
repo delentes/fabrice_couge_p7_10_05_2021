@@ -12,10 +12,17 @@ const connection = mysql.createConnection({
 
 // Topic management
 exports.createTopic = (req, res, next) => {
-    let record = {
-        title: req.body.title,
-        topic: req.body.topic,
-        image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    let record = req.file ?
+    {
+        title: escape(req.body.title),
+        topic: escape(req.body.topic),
+        image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        user_id: req.body.decodedToken.userId
+    } : {
+        title: escape(req.body.title),
+        topic: escape(req.body.topic),
+        image_url: "test",
+        user_id:req.body.decodedToken.userId
     };
     if (req.body.title == null ) {
         res.status(400).json({message:'Veillez remplir le titre !'})

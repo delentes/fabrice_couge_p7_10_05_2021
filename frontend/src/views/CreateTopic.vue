@@ -1,14 +1,18 @@
 <template>
     <div class="card">
         <h1 class="card__title">Poster un sujet</h1>
-        <div class="form__row">
-            <input class="form-row__input" type="text" placeholder="Titre du sujet">
+        <div class="form-row">
+            <input v-model="title" class="form-row__input" type="text" placeholder="Titre du sujet">
         </div>
-        <div class="form__row">
-            <textarea class="form-row__input" name="topic" placeholder="Votre sujet ici"></textarea>
+        <div class="form-row">
+            <textarea v-model="topic" class="form-row__input input__area" name="topic" placeholder="Votre sujet ici"></textarea>
         </div>
-        <div class="form__row">
-            <button @click="createTopic()" class="button" :class="{'button--disabled' : !validatedFields}">
+        <div class="form-row">
+            <label class="card__subtitle" for="file">Sélectionner une image</label>
+            <input class="form-row__input" type="file" name="file" id="file" accept="image/png, image/jpg, image/jpeg, image/gif">
+        </div>
+        <div class="form-row">
+            <button @click="createTopic()" class="button" :class="{'button--disabled' : !validatedFields}" >
                 <span>Envoyer</span>
             </button>
         </div>
@@ -21,8 +25,9 @@ export default {
     name: 'createTopic',
     data: function() {
         return {
-            title:'',
-            topic:'',
+            title: '',
+            topic: '',
+            image_url: '',
         }
     },
     computed:{
@@ -40,13 +45,14 @@ export default {
             this.$store.dispatch('createTopic', {
                 title: this.title,
                 topic: this.topic,
+                image_url: this.image_url,
             }).then(function() {
                 self.$router.push('/');
             }).catch(function(error) {
                 console.log(error);
             });
-        },
-    }
+        }
+    },
 }
 </script>
 
@@ -70,5 +76,8 @@ export default {
     }
     .form-row__input::placeholder {
         color:#aaaaaa;
+    }
+    .input__area {
+        height: 200px;
     }
 </style>

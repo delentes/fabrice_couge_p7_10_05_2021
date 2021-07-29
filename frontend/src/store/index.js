@@ -6,19 +6,23 @@ const instance = axios.create({
   baseURL: 'http://localhost:3000/api'
 });
 
+
+
 let user = localStorage.getItem('user');
 if (!user) {
   user = {
     userId: -1,
+    isadmin: 0,
     token: '',
   };
 } else {
   try {
     user = JSON.parse(user);
-    instance.defaults.headers.common['Authorization'] = user.token;
+    instance.defaults.headers.common['Authorization'] ='Bearer '+user.token;
   } catch (ex) {
     user = {
       userId: -1,
+      isadmin: 0,
       token: '',
     };
   }
@@ -34,6 +38,11 @@ export default createStore({
       email: '',
       password:'',
     },
+    topic:{
+      title: '',
+      topic: '',
+      image_url: '',
+    },
   },
   mutations: {
     setStatus: function (state, status) {
@@ -42,7 +51,7 @@ export default createStore({
     logUser: function (state, user) {
       state.user = user;
       localStorage.setItem('user', JSON.stringify(user));
-      instance.defaults.headers.common['Authorization'] = user.token;
+      instance.defaults.headers.common['Authorization'] ='Bearer '+user.token;
     },
     userInfos: function (state, userInfos) {
       state.userInfos = userInfos;
@@ -53,6 +62,9 @@ export default createStore({
         token: '',
       },
       localStorage.removeItem('user');
+    },
+    topicStatus: function(state, topic) {
+      state.topic = topic;
     }
   },
   actions: {
@@ -64,9 +76,6 @@ export default createStore({
           commit('setStatus', '');
           commit('logUser', response.data);
           resolve(response);
-          console.log(response.data);
-          console.log(user);
-          console.log(userInfos);
         })
         .catch(function (error) {
           commit('setStatus', 'error_login');
@@ -88,7 +97,14 @@ export default createStore({
         });
       });
     },
-  
+    getUserInfos: ({commit, state}) => {
+      instance.get('/auth/profile/'+state.user.userId)
+      .then(function (response) {
+        commit('userInfos', response.data);
+      })
+      .catch(function () {
+      });
+    },
     getTopics: ({commit}, topic) => {
       instance.get('/', topic)
       .then(function (response) {
@@ -99,10 +115,10 @@ export default createStore({
           console.log(error);
       });
     },
-    deleteAccount: ({commit}, ) => {
+    deleteAccount: ({commit, state} ) => {
       commit();
       return new Promise((resolve, reject) => {
-        instance.post('/auth/profile/'+localStorage.data.id)
+        instance.post('/auth/profile/'+state.user.userId)
         .then(function (response) {
           commit('setStatus', '');
           resolve(response);
@@ -113,10 +129,9 @@ export default createStore({
         });
       });
     },
-    createTopic: ({commit}, ) => {
-      commit();
+    createTopic: ({commit}, topic ) => {
       return new Promise((resolve, reject) => {
-        instance.post('topic/create')
+        instance.post('/topics/create',topic)
         .then(function (response) {
           commit('topicStatus', 'topicCreate');
           resolve(response);

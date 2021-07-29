@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
-const auth =require('../middleware/auth');
+
 
 const connection = mysql.createConnection({
     host:'localhost',
@@ -55,8 +55,9 @@ exports.login = (req, res, next) => {
                 if (!valid) {
                     return res.status(401).json({ err: 'Mot de passe incorrect !'});
                 }
-                const data = result[0];
-                res.status(200).json({data,
+                const userId = result[0].id;
+                const isadmin = result[0].isadmin;
+                res.status(200).json({userId, isadmin,
                     token: jwt.sign(
                         { userId: result[0].id },
                         'RANDOM_SECRET_TOKEN',
@@ -70,15 +71,10 @@ exports.login = (req, res, next) => {
 };
 
 exports.getOneUser = (req, res, next) => {
-    connection.query('SELECT id FROM user', function(err, result, field) {
+    connection.query('SELECT * FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
-        if (req.body.decodedToken.userId === result[0].id) {
-            connection.query('SELECT * FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
-                if (err) throw err;
-                result.status(200).json(user)
-            });
-        }
-    }); 
+        res.status(200).json(result[0])
+    });
 };
 
 exports.deleteUser = (req, res, next) => {
@@ -86,7 +82,7 @@ exports.deleteUser = (req, res, next) => {
         connection.query('SELECT id FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
             if (err) throw err;
             if (req.body.decodedToken.userId && req.body.decodedToken.userId !== result[0].id) {
-                throw 'Identifiant invalide';
+                return res.status(401).json( new Error ('Identifiant invalide')) ;
             } else {
                 connection.query('DELETE FROM user WHERE id = ?', result[0].id, function(err, result, field) {
                     if (err) throw err;

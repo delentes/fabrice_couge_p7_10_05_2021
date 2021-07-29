@@ -3,9 +3,7 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Bienvenue sur le forum de GROUPOMANIA"/>
     <div>
-      
     </div>
-    
   </div>
 </template>
 
