@@ -39,7 +39,7 @@ export default {
   },
     computed:{
         validatedFields: function() {
-            if (this.title != "" && this.topic != "") {
+            if (this.title != "" && this.topic != "" && this.image_url != "") {
                 return true;
             } else {
                 return false;

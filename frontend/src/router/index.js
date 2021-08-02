@@ -22,6 +22,16 @@ const routes = [
     name: 'PostTopic',
     component: () => import('../views/CreateTopic.vue')
   },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../views/admin.vue')
+  },
+  {
+    path: '/:id',
+    name: 'Topic',
+    component: () => import('../views/OneTopic.vue')
+  },
 ]
 
 const router = createRouter({

@@ -53,6 +53,7 @@ img {
   background:white;
   border-radius: 16px;
   padding:32px;
+  margin-bottom: 10px;
 }
 
 .card__title {
@@ -116,5 +117,11 @@ img {
       cursor:pointer;
       background: #9e0e40;
     }
+  .link {
+    text-decoration: none;
+  }
+  .link:hover{
+    cursor: pointer;
+  }
 
 </style>

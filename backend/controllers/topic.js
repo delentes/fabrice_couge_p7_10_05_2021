@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
 
 // Topic management
 exports.createTopic = (req, res, next) => {
-    let record = req.file ?
+    const record = req.file ?
     {
         title: escape(req.body.title),
         topic: escape(req.body.topic),
@@ -22,7 +22,7 @@ exports.createTopic = (req, res, next) => {
         title: escape(req.body.title),
         topic: escape(req.body.topic),
         image_url: "test",
-        user_id:req.body.decodedToken.userId
+        user_id: req.body.decodedToken.userId
     };
     if (req.body.title == null ) {
         res.status(400).json({message:'Veillez remplir le titre !'})
@@ -38,14 +38,14 @@ exports.createTopic = (req, res, next) => {
 exports.getAllTopic = (req, res, next) => {
     connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id',function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result)
+        res.status(200).json(result);
     });
 };
 
 exports.getOneTopic = (req, res, next) => {
     connection.query('SELECT * FROM topic INNER JOIN comment ON topic.id = comment.topic_id INNER JOIN user ON topic.user_id = user.id WHERE id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result[0])
+        res.status(200).json(result[0]);
     });
 };
 
@@ -90,7 +90,7 @@ exports.deleteTopic = (req, res, next) => {
 };
 
 exports.adminDeleteTopic = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE = ?', req.body.id, function(err, result, field) {
+    connection.query('SELECT isadmin FROM user WHERE = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (result[0].isadmin === 0) {
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
@@ -131,10 +131,15 @@ exports.topicLike = (req, res, next) => {
 
 // Comment management
 exports.createComment = (req, res, next) => {
-    const record = {
+    const record = req.file ?
+    {
         comment: req.body.comment,
-        image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    };
+        image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        user_id: req.body.decodedToken.userId
+    } : {
+        comment: req.body.comment,
+        user_id: req.body.decodedToken.userId
+    }
     connection.query('INSERT TO comment SET ?', record, function(err, result, field) {
         if (err) throw err;
         result.status(200).json({ message: 'Commentaire enregistré !'});
@@ -149,10 +154,10 @@ exports.modifyComment = (req, res, next) => {
         } : {
             comment: escape(req.body.comment)
         };
-    connection.query('SELECT user_id FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
+    connection.query('SELECT user_id FROM comment WHERE id = ?', req.body.id, function(err, result, field) {
         if (err) throw err;
-        if (userId === comment.user_id) {
-            connection.query('UPDATE comment SET = ? WHERE = ?', commentObject, req.params.id, function(err, result, field) {
+        if (req.body.decodedToken.userId === comment.user_id) {
+            connection.query('UPDATE comment SET = ? WHERE = ?', commentObject, req.body.id, function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json({ message: 'Commentaire modifié !'});
             });
@@ -165,7 +170,7 @@ exports.modifyComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
     connection.query('SELECT comment, user_id FROM comment WHERE id = ?', req.body.id, function(err, result, field){
         if (err) throw err;
-        if (req.body.decodedToken === result[0].user_id) {
+        if (req.body.decodedToken.userId === result[0].user_id) {
             const filename = comment.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
                 ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
@@ -180,7 +185,7 @@ exports.deleteComment = (req, res, next) => {
 };
 
 exports.adminDeleteComment = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.id, function(err, result, field) {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (user.isadmin === 0) {
             result.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});

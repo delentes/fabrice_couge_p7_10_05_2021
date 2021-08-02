@@ -4,7 +4,7 @@
         <router-link  to = "/login">| Se connecter </router-link>
         <router-link v-show = "switchLogin" to = "/profile">| Vos info </router-link>
         <router-link v-show = "switchLogin" to = "/postTopic">| Ajouter un sujet </router-link>
-            
+        <router-link v-show = "switchAdmin" to = "/admin">| Page administrateur </router-link>
     </nav>
 </template>
 <script>

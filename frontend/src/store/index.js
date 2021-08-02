@@ -37,6 +37,7 @@ export default createStore({
       password:'',
     },
     topic:{
+      id: '',
       title: '',
       topic: '',
       image_url: '',
@@ -75,7 +76,7 @@ export default createStore({
           commit('logUser', response.data);
           resolve(response);
         })
-        .catch(function (error) {
+        .catch((error) => {
           commit('setStatus', 'error_login');
           reject(error);
         });
@@ -85,11 +86,11 @@ export default createStore({
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
         instance.post('/auth/signup', userInfos)
-        .then(function (response) {
+        .then((response) => {
           commit('setStatus', 'created');
           resolve(response);
         })
-        .catch(function (error) {
+        .catch((error) => {
           commit('setStatus', 'error_create');
           reject(error);
         });
@@ -97,18 +98,19 @@ export default createStore({
     },
     getUserInfos: ({commit, state}) => {
       instance.get('/auth/profile/'+state.user.userId)
-      .then(function (response) {
+      .then((response) => {
         commit('userInfos', response.data);
       })
-      .catch(function () {
+      .catch((error) => {
+        console.log(error);
       });
     },
     getTopics: ({commit}, topic) => {
       instance.get('/topics/topic', topic)
-      .then(function (response) {
+      .then((response) => {
           commit('topicStatus', response.data);
       })
-      .catch(function (error) {
+      .catch((error) => {
           console.log(error);
       });
     },
@@ -116,11 +118,11 @@ export default createStore({
       commit();
       return new Promise((resolve, reject) => {
         instance.post('/auth/profile/'+state.user.userId)
-        .then(function (response) {
+        .then((response) => {
           commit('setStatus', '');
           resolve(response);
         })
-        .catch(function(error) {
+        .catch((error) => {
           commit('setStatus', 'error_delete');
           reject(error);
         });
@@ -129,15 +131,24 @@ export default createStore({
     createTopic: ({commit}, topic ) => {
       return new Promise((resolve, reject) => {
         instance.post('/topics/create',topic)
-        .then(function (response) {
+        .then((response) => {
           commit('topicStatus', 'topicCreate');
           resolve(response);
-        }).catch(function(error) {
+        }).catch((error) => {
           commit('topicStatus', 'error_createTopic');
           reject(error);
         })
       })
-    }
+    },
+    getOneTopic: ({commit, state}) => {
+      instance.get('/topics/topic/'+state.topic.id)
+      .then((response) => {
+        commit('topicStatus', response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
   },
 
   modules: {
