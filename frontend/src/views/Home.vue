@@ -10,13 +10,11 @@
 
 <script>
 import HelloWorld from '@/components/HelloWorld.vue'
-import topics from '@/components/topics.vue'
 
 export default {
   name: 'Home',
   components: {
     HelloWorld,
-    topics,
   },
 
   methods: {

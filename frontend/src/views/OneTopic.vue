@@ -9,11 +9,10 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-    name: 'topics',
+    name: 'topic',
 
     mounted: function () {
-        this.$store.dispatch('getOneTopic')
-        console.log('test3',this.$store.state.topic)
+        this.$store.dispatch('getOneTopic', this.$route.params.id)
     },
     ...mapState(['topic'])
 }

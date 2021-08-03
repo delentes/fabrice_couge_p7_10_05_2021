@@ -18,9 +18,9 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/postTopic',
-    name: 'PostTopic',
-    component: () => import('../views/CreateTopic.vue')
+    path: '/topics',
+    name: 'Topics',
+    component: () => import('../views/Topics.vue')
   },
   {
     path: '/admin',
@@ -31,6 +31,11 @@ const routes = [
     path: '/:id',
     name: 'Topic',
     component: () => import('../views/OneTopic.vue')
+  },
+  {
+    path: '/createTopic',
+    name: 'createTopic',
+    component: () => import('../views/CreateTopic.vue')
   },
 ]
 

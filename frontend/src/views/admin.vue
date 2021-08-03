@@ -3,8 +3,8 @@
     <div class="card" v-for="user of this.$store.state.usersInfos" :key="user.id">
         <p>{{user.lastname}} {{user.firstname}}</p>
         <p>{{user.email}}</p>
-        <button class="button__admin">Supprimé l'utilisateur</button>
-        <button class="button__admin">Ajouter un administrateur</button>
+        <button @click="deleteUser(user.id)" class="button__admin">Supprimé l'utilisateur</button>
+        <button @click="addAdmin(user.id)" class="button__admin">Ajouter un administrateur</button>
     </div>
 </template>
 <script>
@@ -23,11 +23,11 @@ export default {
     },
     ...mapState(['usersInfos']),
     methods: {
-        addAdamin:function () {
-
+        addAdmin:function (id) {
+            this.$store.dispatch('addAdmin', id)
         },
-        deleteUser: function () {
-
+        deleteUser: function (id) {
+            this.$store.dispatch('deleteUser', id)
         },
     }
 }

@@ -12,10 +12,15 @@ const connection = mysql.createConnection({
 
 // Topic management
 exports.createTopic = (req, res, next) => {
-    const record = {
+    const record = req.file ? {
         title: escape(req.body.title),
         topic: escape(req.body.topic),
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        user_id: req.body.decodedToken.userId
+    } : {
+        title: escape(req.body.title),
+        topic: escape(req.body.topic),
+        image_url: 'test',
         user_id: req.body.decodedToken.userId
     }
     if (req.body.title == null ) {
@@ -37,7 +42,7 @@ exports.getAllTopic = (req, res, next) => {
 };
 
 exports.getOneTopic = (req, res, next) => {
-    connection.query('SELECT * FROM topic INNER JOIN comment ON topic.id = comment.topic_id INNER JOIN user ON topic.user_id = user.id WHERE id = ?', req.body.topic_id, function(err, result, field) {
+    connection.query('SELECT * FROM topic LEFT JOIN comment ON topic.topic_id = comment.topic_id INNER JOIN user ON topic.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
         if (err) throw err;
         res.status(200).json(result[0]);
     });
@@ -53,10 +58,10 @@ exports.modifyTopic = (req, res, next) => {
             title: escape(req.body.title),
             topic: escape(req.body.topic)
         };
-    connection.query('SELECT user_id FROM topic WHERE id = ?', req.body.id, function(err, result, field) {
+    connection.query('SELECT user_id FROM topic WHERE user_id = ?', req.body.id, function(err, result, field) {
         if (err) throw err;
         if (userId === result[0].user_id) {
-            ('UPDATE topic SET = ? WHERE = ?', topicObject , req.body.id, function(err, result, field) {
+            connection.query('UPDATE topic SET = ? WHERE = ?', topicObject , req.body.id, function(err, result, field) {
                 if (err) throw err
                 res.status(200).json({ message: 'Méssage modifié !'});
             });
@@ -67,7 +72,7 @@ exports.modifyTopic = (req, res, next) => {
 };
 
 exports.deleteTopic = (req, res, next) => {
-    connection.query('SELECT topic, user_id FROM topic WHERE = ?', req.body.id, function(err, result, field) {
+    connection.query('SELECT topic, user_id FROM topic WHERE topic_id = ?', req.body.id, function(err, result, field) {
         if (err) throw err;
         if (req.body.decodedToken === result[0].user_id) {
             const filename = topic.image_url.split('/images/')[1];
@@ -83,32 +88,15 @@ exports.deleteTopic = (req, res, next) => {
     });
 };
 
-exports.adminDeleteTopic = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE = ?', req.body.decodedToken.userId, function(err, result, field) {
-        if (err) throw err;
-        if (result[0].isadmin === 0) {
-            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
-        } else {
-            const filename = topic.image_url.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-             ('DELETE FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
-                    if (err) throw err;
-                    res.status(200).json({ message: 'Méssage supprimé !'});
-                });
-            });
-        };
-    });
-};
-
 // like management
 
 exports.addTopicLike = (req, res, next) => {
-    connection.query('SELECT * FROM topiclike LEFT OUTER JOIN topic ON topiclike.topic_id = topic.id LEFT OUTHER JOIN user ON topiclike.user_id = user.id WHERE = topic_id ', function(err, result, field){
+    connection.query('SELECT * FROM topiclike LEFT OUTER JOIN topic ON topiclike.topic_id = topic.topic_id LEFT OUTHER JOIN user ON topiclike.user_id = user.user_id WHERE = topic.topic_id ', function(err, result, field){
         if (err) throw err;
         if (topiclike.like_topic == 1 ) {
             res.status(400).json({ message: 'Topic déjà liké !'});
         } else {
-            ('INSERT INTO topiclike SET like_topic = 1', function(err, result, field) {
+            connection.query('INSERT INTO topiclike SET like_topic = 1', function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json({ message: 'Topic liké !'})
             });
@@ -167,7 +155,7 @@ exports.deleteComment = (req, res, next) => {
         if (req.body.decodedToken.userId === result[0].user_id) {
             const filename = comment.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
-                ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
+                connection.query('DELETE FROM comment WHERE comment_id = ?', req.body.id, function(err, result, field) {
                     if (err) throw err;
                     res.status(200).json({ message: 'Commentaire supprimé !'});
                 });
@@ -178,6 +166,8 @@ exports.deleteComment = (req, res, next) => {
     });
 };
 
+// Admin management
+
 exports.adminDeleteComment = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
@@ -186,9 +176,26 @@ exports.adminDeleteComment = (req, res, next) => {
         } else {
             const filename = comment.image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
-                ('DELETE FROM comment WHERE id = ?', req.params.id, function(err, result, field) {
+                connection.query('DELETE FROM comment WHERE id = ?', req.body.id, function(err, result, field) {
                     if (err) throw err;
                     res.status(200).json({ message: 'Commentaire supprimé !'});
+                });
+            });
+        };
+    });
+};
+
+exports.adminDeleteTopic = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin === 0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            const filename = topic.image_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                connection.query('DELETE FROM topic WHERE id = ?', req.body.id, function(err, result, field) {
+                    if (err) throw err;
+                    res.status(200).json({ message: 'Méssage supprimé !'});
                 });
             });
         };

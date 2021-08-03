@@ -88,6 +88,9 @@ export default createStore({
     }
   },
   actions: {
+    // User logic
+
+    // Login
     login: ({commit}, userInfos) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
@@ -95,7 +98,6 @@ export default createStore({
         .then((response) => {
           commit('setStatus', '');
           commit('logUser', response.data);
-          console.log('test1',response.data);
           resolve(response);
         })
         .catch((error) => {
@@ -104,6 +106,8 @@ export default createStore({
         });
       });
     },
+
+    // Create account
     createAccount: ({commit}, userInfos) => {
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
@@ -118,6 +122,8 @@ export default createStore({
         });
       });
     },
+
+    // User informations
     getUserInfos: ({commit, state}) => {
       instance.get('/auth/profile/'+state.user.userId)
       .then((response) => {
@@ -127,19 +133,11 @@ export default createStore({
         console.log(error);
       });
     },
-    getTopics: ({commit}, topic) => {
-      instance.get('/topics/topic', topic)
-      .then((response) => {
-          commit('topicStatus', response.data);
-      })
-      .catch((error) => {
-          console.log(error);
-      });
-    },
+
+    // Delete user account
     deleteAccount: ({commit, state} ) => {
-      commit();
       return new Promise((resolve, reject) => {
-        instance.post('/auth/profile/'+state.user.userId)
+        instance.delete('/auth/profile/'+state.user.userId)
         .then((response) => {
           commit('setStatus', '');
           resolve(response);
@@ -150,7 +148,12 @@ export default createStore({
         });
       });
     },
+
+    // Logical topic
+
+    // Create a topic
     createTopic: ({commit}, topic ) => {
+      console.log('test topic',topic)
       return new Promise((resolve, reject) => {
         instance.post('/topics/create',topic)
         .then((response) => {
@@ -159,35 +162,100 @@ export default createStore({
         }).catch((error) => {
           commit('topicStatus', 'error_createTopic');
           reject(error);
-        })
-      })
+        });
+      });
     },
-    getOneTopic: ({commit, state}) => {
-      instance.get('/topics/topic/'+state.topic.topic_id)
+
+    // Get all topics
+    getTopics: ({commit}) => {
+      instance.get('/topics/topic')
+      .then((response) => {
+          commit('topicStatus', response.data);
+      })
+      .catch((error) => {
+          console.log(error);
+      });
+    },
+    
+    // Get a topic
+    getOneTopic: ({commit},topic_id) => {
+      instance.get('/topics/topic/'+topic_id)
       .then((response) => {
         commit('topicStatus', response.data);
       })
       .catch((error) => {
         console.log(error);
-      })
+      });
     },
-    getAllUsers: ({commit}) => {
-      instance.get('/auth/admin/profile')
-      .then((response) => {
-        commit('setUsersInfos',response.data);
-        console.log('testuserinfo',response.data)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    },
-    getComment: ({commit}, comment) => {
-      instance.get('',comment)
+
+    // Logical comment
+
+    // Get comments by topic
+    getComment: ({commit}) => {
+      instance.get('')
       .then((response) => {
         commit('commentStatus',response.data);
       })
       .catch((error) => {
         console.log(error);
+      });
+    },
+
+    // Create comment
+    createComment: ({commit},comment) => {
+      return new Promise((resolve,reject) => {
+        instance.post('', comment)
+        .then((response) => {
+          commit('commentStatus', 'commentCreate');
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('commentStatus', 'error commentCreate');
+          reject(error);
+        });
+      });
+    },
+
+    // logical admin
+
+    // Get all users
+    getAllUsers: ({commit}) => {
+      instance.get('/auth/admin/profile')
+      .then((response) => {
+        commit('setUsersInfos', response.data);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
+    
+    // Delete user
+    deleteUser: ({commit}, id) => {
+      return new Promise((resolve, reject) => {
+        instance.post('/auth/admin/delete', id= {id} )
+        .then((response) => {
+          commit('setStatus', '')
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('setStatus','error_delete')
+          reject(error);
+        });
+      });
+    },
+
+    // Add an admin
+    addAdmin: ({commit}, id) => {
+      return new Promise((resolve, reject) => {
+        instance.post('/auth/admin/updateadmin', id= {id})
+        .then((response) => {
+          commit('setStatus', '')
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('setStatus', 'error_addAdmin')
+          reject(error);
+        })
       })
     }
   },

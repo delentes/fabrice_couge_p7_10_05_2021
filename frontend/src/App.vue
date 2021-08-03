@@ -77,6 +77,7 @@ img {
     width: 100%;
     padding: 16px;
     transition: .4s background-color;
+    margin-bottom: 5px;
   }
 
   .button__delete {

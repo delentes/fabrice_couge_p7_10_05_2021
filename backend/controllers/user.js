@@ -47,7 +47,7 @@ exports.login = (req, res, next) => {
     const password = req.body.password;
     connection.query('SELECT * FROM user WHERE email = ?', [email], function(err, result, field) {
         if (err) throw err;
-        else if (email != result[0].email) 
+        else if (!result[0]) 
             return res.status(401).json({ err: 'Utilisateur non trouvé !'});
         else {
             bcrypt.compare(password, result[0].password)
@@ -57,7 +57,6 @@ exports.login = (req, res, next) => {
                 }
                 const userId = result[0].id;
                 const isadmin = result[0].isadmin;
-                console.log('test', result[0]);
                 res.status(200).json({userId, isadmin,
                     token: jwt.sign(
                         { userId: result[0].id },
@@ -111,24 +110,27 @@ exports.getAllUser = (req, res, next) => {
     });
 };
 
-exports.addAdmin = (res, req, next) => {
+exports.addAdmin = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (result[0].isadmin === 0) {
             res.status(403).json({ message: 'Vous n\'avez pas les droits d\'administration'})
         } else {
-            connection.query('SELECT id isadmin FROM user WHERE id = ?',req.body.id, function(err, result, field) {
+            connection.query('SELECT isadmin FROM user WHERE id = ?',req.body.id, function(err, result, field) {
                 if (err) throw err
                 if (result[0].isadmin === 0) {
+                    console.log('test admin1', result[0].isadmin)
                     connection.query('UPDATE user SET isadmin = 1 WHERE id = ?', req.body.id, function(err, result, field) {
                         if (err) throw err;
                         res.status(200).json({ message: 'Administrateur ajouter !'});
                     })
-                } else 
-                    connection.query('UPDATE user SET isadmin =0 WHERE id = ?', req.body.id, function(err, result, field) {
+                } else {
+                    console.log('test admin0', result[0].isadmin)
+                    connection.query('UPDATE user SET isadmin = 0 WHERE id = ?', req.body.id, function(err, result, field) {
                         if (err) throw err;
                         res.status(200).json({ message: 'Administrateur retirer !'});
                     })
+                }
             });
         };
     });
@@ -137,10 +139,11 @@ exports.addAdmin = (res, req, next) => {
 exports.adminDeleteUser = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
-        if (user.isadmin === 0){
+        if (result[0].isadmin === 0){
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administration'});
         } else {
-            connection.query('DELETE FROM user WHERE id = ?', req.params.id, function(err, result, field){
+            console.log('test userid', req.body.id);
+            connection.query('DELETE FROM user WHERE id = ?', req.body.id, function(err, result, field){
                 if (err) throw err;
                 res.status(200).json({ message: 'Utilisateur supprimé !'});
             });

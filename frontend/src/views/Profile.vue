@@ -39,6 +39,8 @@ export default {
     },
     deleteAccount: function () {
       this.$store.dispatch('deleteAccount');
+      this.$store.commit('logout');
+      this.$router.push('/')
     },
   }
 }
