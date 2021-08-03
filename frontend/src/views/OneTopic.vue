@@ -13,8 +13,7 @@ export default {
 
     mounted: function () {
         this.$store.dispatch('getOneTopic')
-        this.$store.state.topic;
-        console.log(this.$store.state.topic)
+        console.log('test3',this.$store.state.topic)
     },
     ...mapState(['topic'])
 }

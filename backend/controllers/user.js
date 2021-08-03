@@ -57,6 +57,7 @@ exports.login = (req, res, next) => {
                 }
                 const userId = result[0].id;
                 const isadmin = result[0].isadmin;
+                console.log('test', result[0]);
                 res.status(200).json({userId, isadmin,
                     token: jwt.sign(
                         { userId: result[0].id },
@@ -100,14 +101,37 @@ exports.deleteUser = (req, res, next) => {
 exports.getAllUser = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
-        if (result[0].isadmin === 0 ){
+        if (result[0].isadmin === 0 ) {
             res.status(403).json({ message: 'Vous n\'avez pas les droits d\'administration'});
         } else 
             connection.query('SELECT id, lastname, firstname, email, password FROM user', function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json(result)
             });
-    })
+    });
+};
+
+exports.addAdmin = (res, req, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin === 0) {
+            res.status(403).json({ message: 'Vous n\'avez pas les droits d\'administration'})
+        } else {
+            connection.query('SELECT id isadmin FROM user WHERE id = ?',req.body.id, function(err, result, field) {
+                if (err) throw err
+                if (result[0].isadmin === 0) {
+                    connection.query('UPDATE user SET isadmin = 1 WHERE id = ?', req.body.id, function(err, result, field) {
+                        if (err) throw err;
+                        res.status(200).json({ message: 'Administrateur ajouter !'});
+                    })
+                } else 
+                    connection.query('UPDATE user SET isadmin =0 WHERE id = ?', req.body.id, function(err, result, field) {
+                        if (err) throw err;
+                        res.status(200).json({ message: 'Administrateur retirer !'});
+                    })
+            });
+        };
+    });
 };
 
 exports.adminDeleteUser = (req, res, next) => {

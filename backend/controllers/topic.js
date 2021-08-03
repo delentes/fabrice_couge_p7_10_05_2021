@@ -12,18 +12,12 @@ const connection = mysql.createConnection({
 
 // Topic management
 exports.createTopic = (req, res, next) => {
-    const record = req.file ?
-    {
+    const record = {
         title: escape(req.body.title),
         topic: escape(req.body.topic),
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
         user_id: req.body.decodedToken.userId
-    } : {
-        title: escape(req.body.title),
-        topic: escape(req.body.topic),
-        image_url: "test",
-        user_id: req.body.decodedToken.userId
-    };
+    }
     if (req.body.title == null ) {
         res.status(400).json({message:'Veillez remplir le titre !'})
     } else if (req.body.topic == null) {
@@ -43,7 +37,7 @@ exports.getAllTopic = (req, res, next) => {
 };
 
 exports.getOneTopic = (req, res, next) => {
-    connection.query('SELECT * FROM topic INNER JOIN comment ON topic.id = comment.topic_id INNER JOIN user ON topic.user_id = user.id WHERE id = ?', req.params.id, function(err, result, field) {
+    connection.query('SELECT * FROM topic INNER JOIN comment ON topic.id = comment.topic_id INNER JOIN user ON topic.user_id = user.id WHERE id = ?', req.body.topic_id, function(err, result, field) {
         if (err) throw err;
         res.status(200).json(result[0]);
     });

@@ -31,12 +31,11 @@ export default {
         }
     },
     mounted: function () {
-    if (this.$store.state.user.userId == -1) {
-      this.$router.push('/login');
-      return;
-    }
-    
-  },
+        if (this.$store.state.user.userId == -1) {
+            this.$router.push('/login');
+        return;
+        }
+    },
     computed:{
         validatedFields: function() {
             if (this.title != "" && this.topic != "" && this.image_url != "") {

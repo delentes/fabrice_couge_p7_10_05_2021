@@ -123,5 +123,21 @@ img {
   .link:hover{
     cursor: pointer;
   }
+  .button__admin {
+    background: red;
+    color:white;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+    width: 45%;
+    padding: 16px;
+    transition: .4s background-color;
+    margin-left: 5px;
+  }
+  .button__admin:hover {
+    cursor:pointer;
+    background: #9e0e40;
+  }
 
 </style>

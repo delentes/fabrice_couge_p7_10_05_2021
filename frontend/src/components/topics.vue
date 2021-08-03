@@ -1,7 +1,7 @@
 <template>
     <div class="topics" >
         <h1 class="card__title">Sujet de discution</h1>
-        <div class="card" v-for="topic of this.$store.state.topic" :key ="topic.id">
+        <div class="card" v-for="topic of this.$store.state.topic" :key ="topic.topic_id">
             <a @click="getOneTopic()" class="link" >
                 <h3 class="card__subtitle">{{topic.title}}</h3>
                 <p>{{topic.topic}}</p>
@@ -14,18 +14,19 @@
     </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 export default {
     name: 'topics',
-
+    
     mounted: function () {
         this.$store.dispatch('getTopics')
         this.$store.state.topic;
     },
     methods: {
         getOneTopic: function () {
-            this.$router.push(`/{{topic.id}}`);
-        }
-        
+            this.$router.push('/');
+        },
+        ...mapState(['topic'])
     }
 }
 </script>

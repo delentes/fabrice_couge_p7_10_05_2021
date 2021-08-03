@@ -37,11 +37,25 @@ export default createStore({
       password:'',
     },
     topic:{
-      id: '',
+      topic_id: '',
       title: '',
       topic: '',
       image_url: '',
     },
+    usersInfos:{
+      id: '',
+      lastname: '',
+      firsname: '',
+      email: '',
+      isadmin:'',
+    },
+    comment:{
+      topic_id: '',
+      comment: '',
+      image_url: '',
+      user_id: '',
+
+    }
   },
   mutations: {
     setStatus: function (state, status) {
@@ -59,11 +73,18 @@ export default createStore({
       state.user = {
         userId: -1,
         token: '',
+        isadmin: 0,
       },
       localStorage.removeItem('user');
     },
     topicStatus: function(state, topic) {
       state.topic = topic;
+    },
+    commentStatus: function(state,comment) {
+      state.comment = comment
+    },
+    setUsersInfos: function (state, usersInfos) {
+      state.usersInfos = usersInfos;
     }
   },
   actions: {
@@ -71,9 +92,10 @@ export default createStore({
       commit('setStatus', 'loading');
       return new Promise((resolve, reject) => {
         instance.post('/auth/login', userInfos)
-        .then(function (response) {
+        .then((response) => {
           commit('setStatus', '');
           commit('logUser', response.data);
+          console.log('test1',response.data);
           resolve(response);
         })
         .catch((error) => {
@@ -141,7 +163,7 @@ export default createStore({
       })
     },
     getOneTopic: ({commit, state}) => {
-      instance.get('/topics/topic/'+state.topic.id)
+      instance.get('/topics/topic/'+state.topic.topic_id)
       .then((response) => {
         commit('topicStatus', response.data);
       })
@@ -149,6 +171,25 @@ export default createStore({
         console.log(error);
       })
     },
+    getAllUsers: ({commit}) => {
+      instance.get('/auth/admin/profile')
+      .then((response) => {
+        commit('setUsersInfos',response.data);
+        console.log('testuserinfo',response.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
+    getComment: ({commit}, comment) => {
+      instance.get('',comment)
+      .then((response) => {
+        commit('commentStatus',response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    }
   },
 
   modules: {
