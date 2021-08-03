@@ -31,7 +31,7 @@ export default {
             this.$router.push('/createTopic')
         },
         getOneTopic: function (topic_id) {
-            this.$router.push(`/${topic_id}`);
+            this.$router.push(`/topics/${topic_id}`);
         },
         ...mapState(['topic'])
     }

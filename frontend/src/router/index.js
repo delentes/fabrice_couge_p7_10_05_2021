@@ -28,7 +28,7 @@ const routes = [
     component: () => import('../views/admin.vue')
   },
   {
-    path: '/:id',
+    path: '/topics/:id',
     name: 'Topic',
     component: () => import('../views/OneTopic.vue')
   },
