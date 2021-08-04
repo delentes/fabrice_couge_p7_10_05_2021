@@ -42,7 +42,7 @@ exports.getAllTopic = (req, res, next) => {
 };
 
 exports.getOneTopic = (req, res, next) => {
-    connection.query('SELECT * FROM topic LEFT JOIN comment ON topic.topic_id = comment.topic_id INNER JOIN user ON topic.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
         if (err) throw err;
         res.status(200).json(result[0]);
     });
@@ -117,15 +117,24 @@ exports.createComment = (req, res, next) => {
     {
         comment: req.body.comment,
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        topic_id: req.body.topic_id,
         user_id: req.body.decodedToken.userId
     } : {
         comment: req.body.comment,
+        topic_id: req.body.topic_id,
         user_id: req.body.decodedToken.userId
     }
     connection.query('INSERT TO comment SET ?', record, function(err, result, field) {
         if (err) throw err;
-        result.status(200).json({ message: 'Commentaire enregistré !'});
+        res.status(201).json({ message: 'Commentaire enregistré !'});
     });
+};
+
+exports.getAllComment = (req, res, next) => {
+    connection.query('SELECT * FROM comment INNER JOIN topic ON comment.topic_id = topic.topic_id WHERE = topic.topic_id = ?', [req.params.id], function(err, result, field) {
+        if (err) throw err;
+        res.status(200).json(result);
+    })
 };
 
 exports.modifyComment = (req, res, next) => {

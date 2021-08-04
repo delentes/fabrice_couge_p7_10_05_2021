@@ -42,6 +42,14 @@ export default createStore({
       topic: '',
       image_url: '',
     },
+    topicInfos:{
+      topic_id: '',
+      title: '',
+      topic: '',
+      image_url: '',
+      lastname: '',
+      firsname: '',
+    },
     usersInfos:{
       id: '',
       lastname: '',
@@ -69,6 +77,9 @@ export default createStore({
     userInfos: function (state, userInfos) {
       state.userInfos = userInfos;
     },
+    setUsersInfos: function (state, usersInfos) {
+      state.usersInfos = usersInfos;
+    },
     logout: function (state) {
       state.user = {
         userId: -1,
@@ -80,12 +91,13 @@ export default createStore({
     topicStatus: function(state, topic) {
       state.topic = topic;
     },
+    topicInfosStatus: function(state, topicInfos){
+      state.topicInfos = topicInfos;
+    },
     commentStatus: function(state,comment) {
       state.comment = comment
     },
-    setUsersInfos: function (state, usersInfos) {
-      state.usersInfos = usersInfos;
-    }
+    
   },
   actions: {
     // User logic
@@ -176,12 +188,12 @@ export default createStore({
           console.log(error);
       });
     },
-    
+    //  creer un state topicInfos et une mutation topicInfosStatus
     // Get a topic
     getOneTopic: ({commit},topic_id) => {
       instance.get('/topics/topic/'+topic_id)
       .then((response) => {
-        commit('topicStatus', response.data);
+        commit('topicInfosStatus', response.data);
       })
       .catch((error) => {
         console.log(error);

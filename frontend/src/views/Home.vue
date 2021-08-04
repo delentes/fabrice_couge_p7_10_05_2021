@@ -2,9 +2,6 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Bienvenue sur le forum de GROUPOMANIA"/>
-    <div class="topics">
-      <topics></topics>
-    </div>
   </div>
 </template>
 

@@ -2,7 +2,7 @@
     <nav>
         <router-link  to = "/">Accueil </router-link>
         <router-link  to = "/login">| Se connecter </router-link>
-        <router-link v-show = "switchLogin" to = "/profile">| Vos info </router-link>
+        <router-link v-show = "switchLogin" to = "/profile">| Vos infos </router-link>
         <router-link v-show = "switchLogin" to = "/Topics">| Rejoindre les discutions </router-link>
         <router-link v-show = "switchAdmin" to = "/admin">| Page administrateur </router-link>
     </nav>
