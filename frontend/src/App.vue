@@ -140,5 +140,36 @@ img {
     cursor:pointer;
     background: #9e0e40;
   }
-
+  .button__modify {
+    background: #2196F3;
+    color:white;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+    width: 30%;
+    padding: 16px;
+    transition: .4s background-color;
+    margin-left: 5px;
+  }
+  .button__modify:hover {
+    cursor:pointer;
+    background: #1976D2;
+  }
+  .button__sup {
+    background: red;
+    color:white;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+    width: 30%;
+    padding: 16px;
+    transition: .4s background-color;
+    margin-left: 5px;
+  }
+  .button__admin:hover {
+    cursor:pointer;
+    background: #9e0e40;
+  }
 </style>

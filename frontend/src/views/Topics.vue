@@ -22,6 +22,7 @@ export default {
     mounted: function () {
     if (this.$store.state.user.userId == -1) {
       this.$router.push('/login');
+
       return;
     }
     this.$store.dispatch('getTopics');
@@ -36,6 +37,7 @@ export default {
             this.$router.push('/createTopic')
         },
         getOneTopic: function (topic_id) {
+            console.log(topic_id)
             this.$router.push(`/topics/${topic_id}`);
         },
         

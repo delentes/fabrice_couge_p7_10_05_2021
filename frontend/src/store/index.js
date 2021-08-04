@@ -57,12 +57,11 @@ export default createStore({
       email: '',
       isadmin:'',
     },
-    comment:{
+    comments:{
       topic_id: '',
       comment: '',
       image_url: '',
       user_id: '',
-
     }
   },
   mutations: {
@@ -94,8 +93,8 @@ export default createStore({
     topicInfosStatus: function(state, topicInfos){
       state.topicInfos = topicInfos;
     },
-    commentStatus: function(state,comment) {
-      state.comment = comment
+    commentsStatus: function(state,comments) {
+      state.comments = comments
     },
     
   },
@@ -165,7 +164,6 @@ export default createStore({
 
     // Create a topic
     createTopic: ({commit}, topic ) => {
-      console.log('test topic',topic)
       return new Promise((resolve, reject) => {
         instance.post('/topics/create',topic)
         .then((response) => {
@@ -188,7 +186,7 @@ export default createStore({
           console.log(error);
       });
     },
-    //  creer un state topicInfos et une mutation topicInfosStatus
+
     // Get a topic
     getOneTopic: ({commit},topic_id) => {
       instance.get('/topics/topic/'+topic_id)
@@ -203,26 +201,45 @@ export default createStore({
     // Logical comment
 
     // Get comments by topic
-    getComment: ({commit}) => {
-      instance.get('')
-      .then((response) => {
-        commit('commentStatus',response.data);
+    getComment: ({commit},topic_id) => {
+      return new Promise((resolve, reject) => {
+        instance.get('/topics/comment/'+topic_id)
+        .then((response) => {
+          commit('commentsStatus',response.data);
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      
     },
 
     // Create comment
     createComment: ({commit},comment) => {
       return new Promise((resolve,reject) => {
-        instance.post('', comment)
+        instance.post('/topics/createComment', comment)
         .then((response) => {
-          commit('commentStatus', 'commentCreate');
+          commit('commentsStatus', 'commentCreate');
           resolve(response);
         })
         .catch((error) => {
-          commit('commentStatus', 'error commentCreate');
+          commit('commentStatus', 'error_commentCreate');
+          reject(error);
+        });
+      });
+    },
+
+    // Modify comment
+    modifyComment: ({commit},comment) => {
+      return new Promise((resolve,reject) => {
+        instance.post('',comment)
+        .then((response) => {
+          commit('commentsStatus', 'commentModify');
+          resolve(response);
+        })
+        .catch((error) =>{
+          commit('commentsStatus', 'error_commentModify')
           reject(error);
         });
       });

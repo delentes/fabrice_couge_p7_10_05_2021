@@ -36,7 +36,7 @@ export default {
     },
     methods:{
         createComment: function (topic_id) {
-            this.store.dispatch('createComment', {
+            this.$store.dispatch('createComment', {
                 comment: this.comment,
                 image_url: this.image_url,
                 topic_id: topic_id,

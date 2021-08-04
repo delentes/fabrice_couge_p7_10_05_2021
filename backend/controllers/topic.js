@@ -28,7 +28,7 @@ exports.createTopic = (req, res, next) => {
     } else if (req.body.topic == null) {
         res.status(400).jon({message:'Veillez remplir la partie post'})
     } else
-    connection.query('INSERT INTO topic SET ?', record, function(err, result, field) {
+    connection.query('INSERT INTO topic SET ?', [record], function(err, result, field) {
         if (err) throw err;
         res.status(201).json({ message: 'Méssage enregitrée !'});
     });
@@ -37,7 +37,11 @@ exports.createTopic = (req, res, next) => {
 exports.getAllTopic = (req, res, next) => {
     connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id',function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result);
+        if (result.length === 0) {
+            res.status(204).json({ message: 'Aucun commentaire'})
+        } else {
+            res.status(200).json(result);
+        }
     });
 };
 
@@ -124,16 +128,20 @@ exports.createComment = (req, res, next) => {
         topic_id: req.body.topic_id,
         user_id: req.body.decodedToken.userId
     }
-    connection.query('INSERT TO comment SET ?', record, function(err, result, field) {
+    connection.query('INSERT INTO comment SET ?', [record], function(err, result, field) {
         if (err) throw err;
         res.status(201).json({ message: 'Commentaire enregistré !'});
     });
 };
 
 exports.getAllComment = (req, res, next) => {
-    connection.query('SELECT * FROM comment INNER JOIN topic ON comment.topic_id = topic.topic_id WHERE = topic.topic_id = ?', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM comment LEFT JOIN topic ON comment.topic_id = topic.topic_id RIGHT JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result);
+        if (result.length === 0) {
+            res.status(204).json({ message: 'Aucun commentaire'})
+        } else {
+            res.status(200).json(result);
+        }
     })
 };
 
