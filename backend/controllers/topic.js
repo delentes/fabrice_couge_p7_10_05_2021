@@ -219,28 +219,116 @@ exports.adminDeleteTopic = (req, res, next) => {
     });
 };
 
-exports.signalSpam = (req, res, next) => {
+exports.signalComment = (req, res, next) => {
     const spam = {
-        topic_id: req.body.topic_id,
         comment_id: req.body.comment_id,
         user_id: req.body.decodedToken.userId,
     }
-    connection.query('INSERT TO spam SET ?', [spam], function(err, result, field) {
+    connection.query('INSERT INTO spam_comment SET ?', [spam], function(err, result, field) {
         if (err) throw err;
         res.status(201).json({message: 'Spam signaler'})
-    })
-}
+    });
+};
 
-exports.getSpam = (req, res, next) => {
+exports.getSpamComment = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (result[0].isadmin ===0) {
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
         } else {
-            connection.query('SELECT * FROM spam LEFT JOIN topic ON spam.topic_id = topic.topic_id LEFT JOIN comment ON spam.comment_id = comment.comment_id LEFT JOIN user ON spam.user_id = user.id', function(err, result, field) {
+            connection.query('SELECT * FROM spam_comment LEFT JOIN comment ON spam_comment.comment_id = comment.comment_id LEFT JOIN user ON spam_comment.user_id = user.id', function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json(result)
+            });
+        };
+    });
+};
+
+exports.cancelSpamComment = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin === 0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            connection.query('DELETE FROM spam_comment WHERE spamcomment_id = ?', req.body.spamcomment_id, function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Spam Supprimer'});
             })
-        }
-    })
-}
+            
+        };
+    });
+};
+
+exports.deleteSpamComment = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin === 0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            connection.query('DELETE FROM spam_comment WHERE spamcomment_id = ?', req.body.spamcomment_id, function(err, result, field) {
+                if (err) throw err;
+            })
+            connection.query('DELETE FROM comment WHERE comment.comment_id = ?', req.body.comment_id, function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Commentaire Supprimer'});
+            })
+        };
+    });
+};
+
+exports.signalTopic = (req, res, next) => {
+    const spam = {
+        topic_id: req.body.comment_id,
+        user_id: req.body.decodedToken.userId,
+    }
+    connection.query('INSERT INTO spam_topic SET ?', [spam], function(err, result, field) {
+        if (err) throw err;
+        res.status(201).json({message: 'Spam signaler'})
+    });
+};
+
+exports.getSpamTopic = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin ===0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            connection.query('SELECT * FROM spam_comment LEFT JOIN comment ON spam_topic.topic_id = topic.topic_id LEFT JOIN user ON spam_topic.user_id = user.id', function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json(result)
+            });
+        };
+    });
+};
+
+exports.cancelSpamTopic = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin === 0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            connection.query('DELETE FROM spam_topic WHERE spamtopic_id = ?', req.body.spamtopic_id, function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Spam Supprimer'});
+            })
+            
+        };
+    });
+};
+
+exports.deleteSpamTopic = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin === 0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            connection.query('DELETE FROM spam_topic WHERE spamtopic_id = ?', req.body.spamtopic_id, function(err, result, field) {
+                if (err) throw err;
+            })
+            connection.query('DELETE FROM topic WHERE topic.topic_id = ?', req.body.topic_id, function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Commentaire Supprimer'});
+            })
+        };
+    });
+};

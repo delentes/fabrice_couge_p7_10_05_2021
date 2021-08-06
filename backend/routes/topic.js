@@ -12,14 +12,22 @@ router.get('/topic', multer, multer, topicCtrl.getAllTopic);
 router.get('/topic/:id', auth, multer, topicCtrl.getOneTopic);
 router.post('/topic/:id', auth, multer, topicCtrl.modifyTopic);
 router.delete('/topic/:id', auth, topicCtrl.deleteTopic);
+router.get('/spamTopic', auth, topicCtrl.getSpamComment);
+router.post('/spamTopic', auth, topicCtrl.cancelSpamComment);
+router.post('/topicSpam', auth, topicCtrl.signalComment);
+router.post('/deleteTopicSpam', auth, topicCtrl.deleteSpamComment);
+
 
 // Comment route
 router.post('/comment', auth, multer, topicCtrl.createComment);
 router.get('/comment/:id', auth, multer, topicCtrl.getAllComment);
 router.post('/comment/:id', auth, multer, topicCtrl.modifyComment);
 router.delete('/comment/:id', auth, topicCtrl.deleteComment);
-
+router.get('/spamComment', auth, topicCtrl.getSpamComment);
+router.post('/spamComment', auth, topicCtrl.cancelSpamComment);
+router.post('/commentSpam', auth, topicCtrl.signalComment);
+router.post('/deleteCommentSpam', auth, topicCtrl.deleteSpamComment);
 // spam route
-router.get('/spam', auth, topicCtrl.getSpam);
-router.post('/spam', auth, topicCtrl.signalSpam);
+
+
 module.exports = router;

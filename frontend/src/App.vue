@@ -54,6 +54,7 @@ img {
   border-radius: 16px;
   padding:32px;
   margin-bottom: 10px;
+  margin-right: 10px;
 }
 
 .card__title {

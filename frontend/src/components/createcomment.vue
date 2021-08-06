@@ -41,6 +41,7 @@ export default {
                 image_url: this.image_url,
                 topic_id: topic_id,
             })
+            window.location.reload();
         }
     },
 }

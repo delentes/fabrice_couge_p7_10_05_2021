@@ -6,7 +6,7 @@
         </div>
             <p class="form-row">Par : {{comment.firstname}} {{comment.lastname}}</p>
         <div>
-            <button class="button__sup">Signaler</button>
+            <button @click="signalSpam(comment.comment_id)" class="button__sup">Signaler</button>
             <button v-if="findUser(comment.user_id)" @click="modifyComment(comment.comment_id)" class="button__modify">Modifier</button>
             <button v-if="findUser(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
@@ -41,13 +41,19 @@ export default {
             }
         },
         modifyComment: function (comment_id) {
-            this.$store.dispatch('modifyComment', comment_id)
+            this.$store.dispatch('modifyComment', {
+                comment_id: comment_id,
+            })
         },
         deleteComment: function (comment_id) {
-            this.$store.dispatch('deleteComment', comment_id)
+            this.$store.dispatch('deleteComment', {
+                comment_id:comment_id,
+            })
         },
-        signalSpam: function () {
-
+        signalSpam: function (comment_id) {
+            this.$store.dispatch('signalComment', {
+                comment_id: comment_id,
+            })
         },
     },
 }

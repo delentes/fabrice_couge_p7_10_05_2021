@@ -9,7 +9,7 @@
                 <p class="form-row">Par : {{topicInfos.firstname}} {{topicInfos.lastname}}</p>
             </div>
             <div>
-                <button class="button__sup">Signaler</button>
+                <button @click="signalTopic(topic.topic_id)" class="button__sup">Signaler</button>
                 <button v-show="validateUser" @click="modifyTopic(topicInfos.topic_id)" class="button__modify">Modifier</button>
                 <button v-show="validateUser" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
             </div>
@@ -56,8 +56,10 @@ export default {
         modifyTopic: function (topic_id) {
             this.$route.push(`/modifyTopic/${topic_id}`)
         },
-        signalSpam: function () {
-
+        signalTopic: function (topic_id) {
+            this.store.dispatch('signalTopic', {
+                topic_id: topic_id,
+            })
         },
     }
     

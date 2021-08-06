@@ -63,9 +63,13 @@ export default createStore({
       image_url: '',
       user_id: '',
     },
-    spams:{
-      topic_id: '',
+    spamsComment:{
+      spamcomment_id: '',
       comment_id: '',
+    },
+    spamsTopic:{
+      spamtopic_id: '',
+      topic_id: '',
     }
   },
   mutations: {
@@ -100,8 +104,11 @@ export default createStore({
     commentsStatus: function(state,comments) {
       state.comments = comments;
     },
-    spamStatus: function(state, spams) {
-      state.spams = spams;
+    spamCommentStatus: function(state, spamsComment) {
+      state.spamsComment = spamsComment;
+    },
+    spamTopicStatus: function(state,spamsTopic) {
+      state.spamsTopic = spamsTopic;
     },
   },
   actions: {
@@ -229,6 +236,17 @@ export default createStore({
       });
     },
 
+    // Signal topic
+    signalTopic: ({commit}, topic_id) => {
+      instance.post('/topics/topicSpam', topic_id)
+      .then((response) => {
+        commit('spamTopicStatus', response);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
+
     // Logical comment
 
     // Get comments by topic
@@ -290,17 +308,14 @@ export default createStore({
       });
     },
 
-    // Signal spam
-    signalSpam: ({commit}, spams) => {
-      return new Promise((resolve, reject) => {
-        instance.post('/topics/spam',spams)
-        .then((response) => {
-          commit('spamStatus', 'spam_signaler');
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        })
+    // Signal comment
+    signalComment: ({commit}, comment_id) => {
+      instance.post('/topics/commentSpam', comment_id)
+      .then((response) => {
+        commit('spamCommentStatus', response);
+      })
+      .catch((error) => {
+        console.log(error)
       })
     },
 
@@ -313,18 +328,83 @@ export default createStore({
         commit('setUsersInfos', response.data);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       })
     },
 
-    // Get spam
-    getSpam: ({commit}) => {
-      instance.get('/topics/spam')
+    // Get comment spam
+    getSpamComment: ({commit}) => {
+      return new Promise((resolve, reject) => {
+        instance.get('/topics/spamComment')
+        .then((response) => {
+          commit('spamCommentStatus', response.data);
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('spamCommentStatus', )
+          reject(error)
+        })
+      })
+      
+    },
+
+    // Cancel comment spam
+    cancelSpamComment:({commit}, spamcomment_id) => {
+      instance.post('/topics/spamComment', spamcomment_id)
       .then((response) => {
-        commit('spamStatus', response.data);
+        commit('spamCommentStatus', response);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
+      })
+    },
+
+    // Delete comment spam
+    deleteSpamComment:({commit}, spamcomment) => {
+      instance.post('/topics/deleteCommentSpam',spamcomment)
+      .then((response) => {
+        commit('spamCommentStatus', response);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+    
+    // Get topic spam
+    getSpamTopic: ({commit}) => {
+      return new Promise((resolve, reject) => {
+        instance.get('/topics/spamTopic')
+        .then((response) => {
+          commit('spamTopicStatus', response.data);
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('spamTopicStatus', )
+          reject(error)
+        })
+      })
+      
+    },
+
+    // Cancel topic spam
+    cancelSpamTopic:({commit}, spamtopic_id) => {
+      instance.post('/topics/spamComment', spamtopic_id)
+      .then((response) => {
+        commit('spamTopicStatus', response);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+
+    // Delete topic spam
+    deleteSpamTopic:({commit}, spamtopic) => {
+      instance.post('/topics/deleteTopicSpam',spamtopic)
+      .then((response) => {
+        commit('spamTopicStatus', response);
+      })
+      .catch((error) => {
+        console.log(error);
       })
     },
     
