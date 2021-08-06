@@ -36,6 +36,13 @@ export default createStore({
       email: '',
       password:'',
     },
+    usersInfos:{
+      id: '',
+      lastname: '',
+      firsname: '',
+      email: '',
+      isadmin:'',
+    },
     topic:{
       topic_id: '',
       title: '',
@@ -50,18 +57,15 @@ export default createStore({
       lastname: '',
       firsname: '',
     },
-    usersInfos:{
-      id: '',
-      lastname: '',
-      firsname: '',
-      email: '',
-      isadmin:'',
-    },
     comments:{
       topic_id: '',
       comment: '',
       image_url: '',
       user_id: '',
+    },
+    spams:{
+      topic_id: '',
+      comment_id: '',
     }
   },
   mutations: {
@@ -94,9 +98,11 @@ export default createStore({
       state.topicInfos = topicInfos;
     },
     commentsStatus: function(state,comments) {
-      state.comments = comments
+      state.comments = comments;
     },
-    
+    spamStatus: function(state, spams) {
+      state.spams = spams;
+    },
   },
   actions: {
     // User logic
@@ -165,7 +171,7 @@ export default createStore({
     // Create a topic
     createTopic: ({commit}, topic ) => {
       return new Promise((resolve, reject) => {
-        instance.post('/topics/create',topic)
+        instance.post('/topics/topic',topic)
         .then((response) => {
           commit('topicStatus', 'topicCreate');
           resolve(response);
@@ -198,6 +204,31 @@ export default createStore({
       });
     },
 
+    // Modify topic
+    modifyTopic: ({commit}, topic_id, topic) => {
+      instance.post('/topics/topic'+topic_id,topic)
+      .then((response) => {
+        commit('topicInfosStatus', response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+
+    // Delete topic
+    deleteTopic: ({commit}, topic_id) => {
+      return new Promise((resolve, reject) => {
+        instance.delete('/topics/topic/'+topic_id)
+        .then((response) => {
+          commit('topicStatus', 'topicDelete');
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      });
+    },
+
     // Logical comment
 
     // Get comments by topic
@@ -218,7 +249,7 @@ export default createStore({
     // Create comment
     createComment: ({commit},comment) => {
       return new Promise((resolve,reject) => {
-        instance.post('/topics/createComment', comment)
+        instance.post('/topics/comment', comment)
         .then((response) => {
           commit('commentsStatus', 'commentCreate');
           resolve(response);
@@ -245,6 +276,34 @@ export default createStore({
       });
     },
 
+    // Delete comment
+    deleteComment: ({commit}, comment_id) => {
+      return new Promise((resolve, reject) => {
+        instance.delete('/topics/comment/'+comment_id)
+        .then((response) => {
+          commit('commentsStatus', 'commentDelete');
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      });
+    },
+
+    // Signal spam
+    signalSpam: ({commit}, spams) => {
+      return new Promise((resolve, reject) => {
+        instance.post('/topics/spam',spams)
+        .then((response) => {
+          commit('spamStatus', 'spam_signaler');
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        })
+      })
+    },
+
     // logical admin
 
     // Get all users
@@ -252,6 +311,17 @@ export default createStore({
       instance.get('/auth/admin/profile')
       .then((response) => {
         commit('setUsersInfos', response.data);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
+
+    // Get spam
+    getSpam: ({commit}) => {
+      instance.get('/topics/spam')
+      .then((response) => {
+        commit('spamStatus', response.data);
       })
       .catch((error) => {
         console.log(error)

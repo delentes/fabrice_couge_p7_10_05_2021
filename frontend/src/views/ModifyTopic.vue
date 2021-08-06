@@ -12,17 +12,18 @@
             <input class="form-row__input" type="file" name="file" id="file" accept="image/png, image/jpg, image/jpeg, image/gif">
         </div>
         <div class="form-row">
-            <button @click="createTopic()" class="button" :class="{'button--disabled' : !validatedFields}" >
+            <button @click="modifyTopic(topicInfos.topic_id)" class="button" :class="{'button--disabled' : !validatedFields}" >
                 <span>Envoyer</span>
             </button>
         </div>
     </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 
 
 export default {
-    name: 'createTopic',
+    name: 'modifyTopic',
     data: function() {
         return {
             title: '',
@@ -43,12 +44,13 @@ export default {
             } else {
                 return false;
             }
-        }
+        },
+        ...mapState(['topicInfos'])
     },
     methods: {
-        createTopic: function() {
+        modifyTopic: function(topic_id) {
             const self = this;
-            this.$store.dispatch('createTopic', {
+            this.$store.dispatch('modifyTopic',topic_id, {
                 title: this.title,
                 topic: this.topic,
                 image_url: this.image_url,

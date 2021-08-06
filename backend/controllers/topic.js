@@ -38,7 +38,7 @@ exports.getAllTopic = (req, res, next) => {
     connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id',function(err, result, field) {
         if (err) throw err;
         if (result.length === 0) {
-            res.status(204).json({ message: 'Aucun commentaire'})
+            res.status(204).json({ message: 'Aucun topic'})
         } else {
             res.status(200).json(result);
         }
@@ -119,13 +119,13 @@ exports.topicLike = (req, res, next) => {
 exports.createComment = (req, res, next) => {
     const record = req.file ?
     {
-        comment: req.body.comment,
+        comment: escape(req.body.comment),
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        topic_id: req.body.topic_id,
+        topic_id: escape(req.body.topic_id),
         user_id: req.body.decodedToken.userId
     } : {
-        comment: req.body.comment,
-        topic_id: req.body.topic_id,
+        comment: escape(req.body.comment),
+        topic_id: escape(req.body.topic_id),
         user_id: req.body.decodedToken.userId
     }
     connection.query('INSERT INTO comment SET ?', [record], function(err, result, field) {
@@ -203,7 +203,7 @@ exports.adminDeleteComment = (req, res, next) => {
 };
 
 exports.adminDeleteTopic = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE = ?', req.body.decodedToken.userId, function(err, result, field) {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
         if (result[0].isadmin === 0) {
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
@@ -218,3 +218,29 @@ exports.adminDeleteTopic = (req, res, next) => {
         };
     });
 };
+
+exports.signalSpam = (req, res, next) => {
+    const spam = {
+        topic_id: req.body.topic_id,
+        comment_id: req.body.comment_id,
+        user_id: req.body.decodedToken.userId,
+    }
+    connection.query('INSERT TO spam SET ?', [spam], function(err, result, field) {
+        if (err) throw err;
+        res.status(201).json({message: 'Spam signaler'})
+    })
+}
+
+exports.getSpam = (req, res, next) => {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+        if (err) throw err;
+        if (result[0].isadmin ===0) {
+            res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
+        } else {
+            connection.query('SELECT * FROM spam LEFT JOIN topic ON spam.topic_id = topic.topic_id LEFT JOIN comment ON spam.comment_id = comment.comment_id LEFT JOIN user ON spam.user_id = user.id', function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json(result)
+            })
+        }
+    })
+}

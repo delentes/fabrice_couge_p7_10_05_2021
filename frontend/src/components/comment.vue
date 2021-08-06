@@ -7,7 +7,8 @@
             <p class="form-row">Par : {{comment.firstname}} {{comment.lastname}}</p>
         <div>
             <button class="button__sup">Signaler</button>
-            <button class="button__modify">Modifier</button>
+            <button v-if="findUser(comment.user_id)" @click="modifyComment(comment.comment_id)" class="button__modify">Modifier</button>
+            <button v-if="findUser(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
     </div>
 </template>
@@ -22,13 +23,32 @@ export default {
     },
     computed: {
         findcomment: function () {
-            if (this.$store.state.comment != 0) {
+            if (this.$store.state.comments != 0) {
                 return true;
             } else {
                 return false;
             }
         },
+        
         ...mapState(['comments']),
+    },
+    methods: {
+        findUser: function (user_id) {
+            if (this.$store.state.user.userId == user_id) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        modifyComment: function (comment_id) {
+            this.$store.dispatch('modifyComment', comment_id)
+        },
+        deleteComment: function (comment_id) {
+            this.$store.dispatch('deleteComment', comment_id)
+        },
+        signalSpam: function () {
+
+        },
     },
 }
 </script>

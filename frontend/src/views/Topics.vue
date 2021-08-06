@@ -37,7 +37,6 @@ export default {
             this.$router.push('/createTopic')
         },
         getOneTopic: function (topic_id) {
-            console.log(topic_id)
             this.$router.push(`/topics/${topic_id}`);
         },
         

@@ -25,7 +25,7 @@ const routes = [
   {
     path: '/admin',
     name: 'Admin',
-    component: () => import('../views/admin.vue')
+    component: () => import('../views/Admin.vue')
   },
   {
     path: '/topics/:id',
@@ -36,6 +36,11 @@ const routes = [
     path: '/createTopic',
     name: 'createTopic',
     component: () => import('../views/CreateTopic.vue')
+  },
+  {
+    path: '/modifyTopic/:id',
+    name: 'ModifyTopic',
+    component: () => import('../views/ModifyTopic.vue')
   },
 ]
 

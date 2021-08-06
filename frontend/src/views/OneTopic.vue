@@ -10,8 +10,8 @@
             </div>
             <div>
                 <button class="button__sup">Signaler</button>
-                <button class="button__modify">Modifier</button>
-                <button class="button__sup">Supprimer</button>
+                <button v-show="validateUser" @click="modifyTopic(topicInfos.topic_id)" class="button__modify">Modifier</button>
+                <button v-show="validateUser" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
             </div>
         </div>
         <div class="comment">
@@ -36,10 +36,30 @@ export default {
     },
     mounted: function () {
         this.$store.dispatch('getOneTopic', this.$route.params.id)
+        
     },
     computed: {
-        ...mapState(['topicInfos'])
+        validateUser: function () {
+            if(this.$store.state.user.userId === this.$store.state.topicInfos.user_id) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        ...mapState(['topicInfos','userInfos'])
     },
+    methods: {
+        deleteTopic: function (topic_id) {
+            this.$store.dispatch('deleteTopic', topic_id)
+            this.$route.push('/topics')
+        },
+        modifyTopic: function (topic_id) {
+            this.$route.push(`/modifyTopic/${topic_id}`)
+        },
+        signalSpam: function () {
+
+        },
+    }
     
     
 }
