@@ -37,11 +37,7 @@ const routes = [
     name: 'createTopic',
     component: () => import('../views/CreateTopic.vue')
   },
-  {
-    path: '/modifyTopic/:id',
-    name: 'ModifyTopic',
-    component: () => import('../views/ModifyTopic.vue')
-  },
+  
 ]
 
 const router = createRouter({

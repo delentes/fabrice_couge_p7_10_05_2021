@@ -8,14 +8,14 @@ const topicCtrl = require ('../controllers/topic');
 
 // Topic route
 router.post('/topic', auth, multer, topicCtrl.createTopic);
-router.get('/topic', multer, multer, topicCtrl.getAllTopic);
+router.get('/topic', auth, multer, topicCtrl.getAllTopic);
 router.get('/topic/:id', auth, multer, topicCtrl.getOneTopic);
 router.post('/topic/:id', auth, multer, topicCtrl.modifyTopic);
 router.delete('/topic/:id', auth, topicCtrl.deleteTopic);
-router.get('/spamTopic', auth, topicCtrl.getSpamComment);
-router.post('/spamTopic', auth, topicCtrl.cancelSpamComment);
-router.post('/topicSpam', auth, topicCtrl.signalComment);
-router.post('/deleteTopicSpam', auth, topicCtrl.deleteSpamComment);
+router.get('/spamTopic', auth, topicCtrl.getSpamTopic);
+router.post('/spamTopic', auth, topicCtrl.cancelSpamTopic);
+router.post('/topicSpam', auth, topicCtrl.signalTopic);
+router.post('/deleteTopicSpam', auth, topicCtrl.deleteSpamTopic);
 
 
 // Comment route

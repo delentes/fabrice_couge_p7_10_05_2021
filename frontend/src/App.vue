@@ -169,7 +169,7 @@ img {
     transition: .4s background-color;
     margin-left: 5px;
   }
-  .button__admin:hover {
+  .button__sup:hover {
     cursor:pointer;
     background: #9e0e40;
   }

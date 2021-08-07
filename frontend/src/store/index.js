@@ -176,9 +176,9 @@ export default createStore({
     // Logical topic
 
     // Create a topic
-    createTopic: ({commit}, topic ) => {
+    createTopic: ({commit}, formData) => {
       return new Promise((resolve, reject) => {
-        instance.post('/topics/topic',topic)
+        instance.post('/topics/topic', formData)
         .then((response) => {
           commit('topicStatus', 'topicCreate');
           resolve(response);
@@ -212,8 +212,8 @@ export default createStore({
     },
 
     // Modify topic
-    modifyTopic: ({commit}, topic_id, topic) => {
-      instance.post('/topics/topic'+topic_id,topic)
+    modifyTopic: ({commit},topic_id ,formData) => {
+      instance.post('/topics/topic'+topic_id,formData)
       .then((response) => {
         commit('topicInfosStatus', response.data);
       })
@@ -265,9 +265,9 @@ export default createStore({
     },
 
     // Create comment
-    createComment: ({commit},comment) => {
+    createComment: ({commit},formData) => {
       return new Promise((resolve,reject) => {
-        instance.post('/topics/comment', comment)
+        instance.post('/topics/comment', formData)
         .then((response) => {
           commit('commentsStatus', 'commentCreate');
           resolve(response);
@@ -376,6 +376,7 @@ export default createStore({
         instance.get('/topics/spamTopic')
         .then((response) => {
           commit('spamTopicStatus', response.data);
+          console.log(response.data);
           resolve(response);
         })
         .catch((error) => {
@@ -388,7 +389,7 @@ export default createStore({
 
     // Cancel topic spam
     cancelSpamTopic:({commit}, spamtopic_id) => {
-      instance.post('/topics/spamComment', spamtopic_id)
+      instance.post('/topics/spamtopic', spamtopic_id)
       .then((response) => {
         commit('spamTopicStatus', response);
       })

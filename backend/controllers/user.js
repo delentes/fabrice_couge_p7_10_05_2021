@@ -29,9 +29,9 @@ exports.signup = (req, res, next) => {
         bcrypt.hash(req.body.password, 10)
             .then(hash => {
                 const record = {
-                    lastname: req.body.lastname,
-                    firstname: req.body.firstname,
-                    email: req.body.email,
+                    lastname: escape(req.body.lastname),
+                    firstname: escape(req.body.firstname),
+                    email: escape(req.body.email),
                     password: hash,
             }
         connection.query('INSERT INTO user SET ?', [record], function(err, result, field) {

@@ -35,13 +35,21 @@ export default {
         ...mapState(['topicInfos'])
     },
     methods:{
-        createComment: function (topic_id) {
-            this.$store.dispatch('createComment', {
-                comment: this.comment,
-                image_url: this.image_url,
-                topic_id: topic_id,
+        createComment: async function (topic_id) {
+            const formData = new FormData()
+            formData.append('image', this.selectedFile)
+            formData.append('name', this.selectedFile.name)
+            formData.append('comment',this.comment)
+            formData.append('user_id',this.$store.state.user.userId)
+            formData.append('topic_id',topic_id)
+            await this.$store.dispatch('createComment', formData)
+            .then(function() {
+                window.location.reload();
             })
-            window.location.reload();
+            .catch(function(error) {
+                console.log(error);
+            });
+            
         }
     },
 }

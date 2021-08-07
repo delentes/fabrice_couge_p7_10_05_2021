@@ -12,16 +12,11 @@ const connection = mysql.createConnection({
 
 // Topic management
 exports.createTopic = (req, res, next) => {
-    const record = req.file ? {
+    const record = {
         title: escape(req.body.title),
         topic: escape(req.body.topic),
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        user_id: req.body.decodedToken.userId
-    } : {
-        title: escape(req.body.title),
-        topic: escape(req.body.topic),
-        image_url: 'test',
-        user_id: req.body.decodedToken.userId
+        user_id: escape(req.body.user_id)
     }
     if (req.body.title == null ) {
         res.status(400).json({message:'Veillez remplir le titre !'})
@@ -76,12 +71,12 @@ exports.modifyTopic = (req, res, next) => {
 };
 
 exports.deleteTopic = (req, res, next) => {
-    connection.query('SELECT topic, user_id FROM topic WHERE topic_id = ?', req.body.id, function(err, result, field) {
+    connection.query('SELECT * FROM topic WHERE topic_id = ?', req.params.id, function(err, result, field) {
         if (err) throw err;
-        if (req.body.decodedToken === result[0].user_id) {
-            const filename = topic.image_url.split('/images/')[1];
+        if (req.body.decodedToken.userId == result[0].user_id) {
+            const filename = result[0].image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
-             ('DELETE FROM topic WHERE id = ?', req.params.id, function(err, result, field) {
+                connection.query('DELETE FROM topic WHERE topic_id = ?', req.params.id, function(err, result, field) {
                     if (err) throw err;
                     res.status(200).json({ message: 'Méssage supprimé !'});
                 });
@@ -170,7 +165,7 @@ exports.deleteComment = (req, res, next) => {
     connection.query('SELECT comment, user_id FROM comment WHERE id = ?', req.body.id, function(err, result, field){
         if (err) throw err;
         if (req.body.decodedToken.userId === result[0].user_id) {
-            const filename = comment.image_url.split('/images/')[1];
+            const filename = result[0].image_url.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
                 connection.query('DELETE FROM comment WHERE comment_id = ?', req.body.id, function(err, result, field) {
                     if (err) throw err;
@@ -278,7 +273,7 @@ exports.deleteSpamComment = (req, res, next) => {
 
 exports.signalTopic = (req, res, next) => {
     const spam = {
-        topic_id: req.body.comment_id,
+        topic_id: req.body.topic_id,
         user_id: req.body.decodedToken.userId,
     }
     connection.query('INSERT INTO spam_topic SET ?', [spam], function(err, result, field) {
@@ -293,7 +288,7 @@ exports.getSpamTopic = (req, res, next) => {
         if (result[0].isadmin ===0) {
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
         } else {
-            connection.query('SELECT * FROM spam_comment LEFT JOIN comment ON spam_topic.topic_id = topic.topic_id LEFT JOIN user ON spam_topic.user_id = user.id', function(err, result, field) {
+            connection.query('SELECT * FROM spam_topic LEFT JOIN topic ON spam_topic.topic_id = topic.topic_id LEFT JOIN user ON spam_topic.user_id = user.id', function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json(result)
             });

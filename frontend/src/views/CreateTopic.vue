@@ -8,11 +8,11 @@
             <textarea v-model="topic" class="form-row__input input__area" name="topic" placeholder="Votre sujet ici"></textarea>
         </div>
         <div class="form-row">
-            <label class="card__subtitle" for="file">Sélectionner une image</label>
-            <input class="form-row__input" type="file" name="file" id="file" accept="image/png, image/jpg, image/jpeg, image/gif">
+            <label class="card__subtitle" for="file">Sélectionner une image:</label>
+            <input @change="onFileSelected" class="form-row__input" type="file" name="image" id="file" accept="image/png, image/jpg, image/jpeg, image/gif">
         </div>
         <div class="form-row">
-            <button @click="createTopic()" class="button" :class="{'button--disabled' : !validatedFields}" >
+            <button @click="createTopic()"  class="button" :class="{'button--disabled' : !validatedFields}" >
                 <span>Envoyer</span>
             </button>
         </div>
@@ -27,7 +27,6 @@ export default {
         return {
             title: '',
             topic: '',
-            image_url: '',
         }
     },
     mounted: function () {
@@ -46,13 +45,18 @@ export default {
         }
     },
     methods: {
-        createTopic: function() {
-            const self = this;
-            this.$store.dispatch('createTopic', {
-                title: this.title,
-                topic: this.topic,
-                image_url: this.image_url,
-            })
+        onFileSelected (event) {
+            this.selectedFile = event.target.files[0]
+        },
+        createTopic: async function() {
+            const self = this
+            const formData = new FormData()
+            formData.append('image', this.selectedFile)
+            formData.append('name', this.selectedFile.name)
+            formData.append('title',this.title)
+            formData.append('topic',this.topic)
+            formData.append('user_id',this.$store.state.user.userId)
+            await this.$store.dispatch('createTopic', formData)
             .then(function() {
                 self.$router.push('/Topics');
             })
@@ -61,6 +65,7 @@ export default {
                     });
                 }
             },
+        
 }
 </script>
 
