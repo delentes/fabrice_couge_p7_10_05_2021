@@ -86,13 +86,15 @@ export default {
         modifyTopic: async function (topic_id) {
             const self = this
             const formData = new FormData()
-            formData.append('image', this.selectedFile)
-            formData.append('name', this.selectedFile.name)
+            if (this.selectedFile == '') {
+                formData.append('image', this.selectedFile)
+                formData.append('name', this.selectedFile.name)
+            }
             formData.append('title',this.title)
             formData.append('topic',this.topic)
             formData.append('user_id',this.$store.state.user.userId)
             formData.append('topic_id',topic_id)
-            await this.$store.dispatch('createTopic', formData,topic_id)
+            await this.$store.dispatch('modifyTopic', formData)
             .then(function() {
                 self.$router.push('/Topics');
             })

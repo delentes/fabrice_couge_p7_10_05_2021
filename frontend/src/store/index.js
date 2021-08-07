@@ -212,8 +212,9 @@ export default createStore({
     },
 
     // Modify topic
-    modifyTopic: ({commit},topic_id ,formData) => {
-      instance.post('/topics/topic'+topic_id,formData)
+    modifyTopic: async ({commit},formData) => {
+      console.log(formData)
+      await instance.post('/topics/topic/modify',formData)
       .then((response) => {
         commit('topicInfosStatus', response.data);
       })
@@ -280,9 +281,9 @@ export default createStore({
     },
 
     // Modify comment
-    modifyComment: ({commit},comment) => {
+    modifyComment: ({commit},formData) => {
       return new Promise((resolve,reject) => {
-        instance.post('',comment)
+        instance.post('/topics/comment/modify',formData)
         .then((response) => {
           commit('commentsStatus', 'commentModify');
           resolve(response);

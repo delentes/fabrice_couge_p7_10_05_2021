@@ -6,7 +6,7 @@
                 <input v-model="comment" class="form-row__input" type="text" placeholder="Votre commentaire">
             </div>
             <div class="form-row">
-                <input class="form-row__input" type="file" accept="image/png, image/jpg, image/jpeg, image/gif">
+                <input @change="onFileSelected" class="form-row__input" type="file" accept="image/png, image/jpg, image/jpeg, image/gif">
             </div>
             <div class="form-row">
                 <button @click="createComment(topicInfos.topic_id)" class="button" :class="{'button--disabled' : !validatedFields}">Envoyer</button>
@@ -21,7 +21,6 @@ export default {
     data: function (){
         return {
             comment: '',
-            image_url: '',
         }
     },
     computed:{
@@ -35,10 +34,15 @@ export default {
         ...mapState(['topicInfos'])
     },
     methods:{
+        onFileSelected (event) {
+            this.selectedFile = event.target.files[0]
+        },
         createComment: async function (topic_id) {
             const formData = new FormData()
-            formData.append('image', this.selectedFile)
-            formData.append('name', this.selectedFile.name)
+            if (this.selectedFile == '') {
+                formData.append('image', this.selectedFile)
+                formData.append('name', this.selectedFile.name)
+            }
             formData.append('comment',this.comment)
             formData.append('user_id',this.$store.state.user.userId)
             formData.append('topic_id',topic_id)
@@ -49,7 +53,6 @@ export default {
             .catch(function(error) {
                 console.log(error);
             });
-            
         }
     },
 }

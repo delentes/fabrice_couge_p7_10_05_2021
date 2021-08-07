@@ -1,14 +1,20 @@
 <template>
     <div v-show= "findcomment" v-for="comment of comments" :key="comment.comment_id" class="card">
-        <p>{{comment.comment}}</p>
+        <p v-if="mode == 'comment'">{{comment.comment}}</p>
+        <input v-if="mode == 'modify'" v-model="commentmodify" class="form-row__input" type="text" >
         <div class="form-row">
-            <img v-bind:src="comment.image_url" alt="">
+            <img v-if="mode == 'comment'" v-bind:src="comment.image_url" alt="">
+            <input @change="onFileSelected" v-if="mode == 'modify'" class="form-row__input" type="file" accept="image/png, image/jpg, image/jpeg, image/gif">
         </div>
             <p class="form-row">Par : {{comment.firstname}} {{comment.lastname}}</p>
-        <div>
+        <div v-if="mode == 'comment'" class="form-row">
             <button @click="signalSpam(comment.comment_id)" class="button__sup">Signaler</button>
-            <button v-if="findUser(comment.user_id)" @click="modifyComment(comment.comment_id)" class="button__modify">Modifier</button>
+            <button v-if="findUser(comment.user_id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
             <button v-if="findUser(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
+        </div>
+        <div v-if="mode == 'modify'">
+            <button @click="switchToComment" class="button__modify">Annuler</button>
+            <button @click="modifyComment(comment.comment_id)" class="button__sup">Envoyer</button>
         </div>
     </div>
 </template>
@@ -17,6 +23,12 @@ import { mapState } from 'vuex'
 
 export default {
     name: 'comment',
+    data: function() {
+        return {
+            mode: 'comment',
+            commentmodify: '',
+        }
+    },
     
     mounted: function () {
         this.$store.dispatch('getComment',this.$store.state.topicInfos.topic_id)
@@ -29,10 +41,17 @@ export default {
                 return false;
             }
         },
+
         
         ...mapState(['comments']),
     },
     methods: {
+        switchToModifyComment: function () {
+            this.mode = 'modify';
+        },
+        switchToComment: function () {
+            this.mode = 'comment';
+        },
         findUser: function (user_id) {
             if (this.$store.state.user.userId == user_id) {
                 return true;
@@ -40,10 +59,24 @@ export default {
                 return false;
             }
         },
-        modifyComment: function (comment_id) {
-            this.$store.dispatch('modifyComment', {
-                comment_id: comment_id,
+        onFileSelected (event) {
+            this.selectedFile = event.target.files[0]
+        },
+        modifyComment: async function () {
+            const formData = new FormData()
+            if (this.selectedFile == '') {
+                formData.append('image', this.selectedFile)
+                formData.append('name', this.selectedFile.name)
+            }
+            formData.append('comment',this.commentmodify)
+            formData.append('user_id',this.$store.state.user.userId)
+            await this.$store.dispatch('modifyComment', formData)
+            .then(function() {
+                window.location.reload();
             })
+            .catch(function(error) {
+                console.log(error);
+            });
         },
         deleteComment: function (comment_id) {
             this.$store.dispatch('deleteComment', {
