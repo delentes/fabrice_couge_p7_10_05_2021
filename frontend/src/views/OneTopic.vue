@@ -18,6 +18,11 @@
             </div>
             <img v-if="mode == 'topic'" class="oneTopic__center" v-bind:src="topicInfos.image_url" alt="">
             <p class="form-row oneTopic__center">Par : {{topicInfos.firstname}} {{topicInfos.lastname}}</p>
+            <div v-if="mode == 'topic'" class="form-row">
+                <button class="button__like" :class="{'button__liked' : liked}">Like</button>
+                <p></p>
+                <!-- géré une varible undefined -->
+            </div>
             <div v-if="mode == 'topic'">
                 <button @click="signalTopic(topicInfos.topic_id)" class="button__sup">Signaler</button>
                 <button v-show="validateUser" @click="switchToModifyTopic()" class="button__modify">Modifier</button>
@@ -57,7 +62,14 @@ export default {
     },
     mounted: function () {
         this.$store.dispatch('getOneTopic', this.$route.params.id)
-        
+        this.$store.dispatch('countLike', {
+            topic_id: this.$store.state.topicInfos.topic_id,
+        })
+        this.$store.dispatch('liked', {
+            topic_id: this.$store.state.topicInfos.topic_id,
+            user_id: this.$store.state.user.userId,
+        })
+        console.log(this.$store.state.liked)
     },
     computed: {
         validateUser: function () {
@@ -67,7 +79,14 @@ export default {
                 return false;
             }
         },
-        ...mapState(['topicInfos'])
+        liked: function () {
+            if(this.$store.state.liked.like_topic == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        ...mapState(['topicInfos'],['countLike'])
     },
     methods: {
         switchToModifyTopic: function () {
@@ -107,6 +126,12 @@ export default {
                 topic_id: topic_id,
             })
         },
+        addLike: function () {
+            this.$store.dispatch('addLike', {
+                topic_id: this.$store.state.topicInfos.topic_id,
+                user_id: this.$store.state.user.userId,
+            })
+        },
     }
     
     
@@ -136,4 +161,36 @@ export default {
     .oneTopic__center{
         justify-content: center;
     }
+    .button__like {
+    background: #2196F3;
+    color:white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    width: 20%;
+    padding: 10px;
+    transition: .4s background-color;
+    margin-left: 5px;
+  }
+  .button__like:hover {
+    cursor:pointer;
+    background: #1976D2;
+  }
+  .button__liked {
+    background: #40A497;
+    color:white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    width: 20%;
+    padding: 10px;
+    transition: .4s background-color;
+    margin-left: 5px;
+  }
+  .button__liked:hover {
+    cursor:pointer;
+    background: green;
+  }
 </style>

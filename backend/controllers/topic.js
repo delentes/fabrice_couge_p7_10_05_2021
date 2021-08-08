@@ -50,11 +50,11 @@ exports.getOneTopic = (req, res, next) => {
 exports.modifyTopic = (req, res, next) => {
     const topicObject = req.file ?
     {
-        title: escape(req.body.title),
+        title: req.body.title,
         topic: req.body.topic,
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : {
-        title: escape(req.body.title),
+        title: req.body.title,
         topic: req.body.topic
     };
     connection.query('SELECT user_id FROM topic WHERE user_id = ?', req.body.user_id, function(err, result, field) {
@@ -91,25 +91,45 @@ exports.deleteTopic = (req, res, next) => {
 // like management
 
 exports.addTopicLike = (req, res, next) => {
-    connection.query('SELECT * FROM topiclike LEFT JOIN topic ON topiclike.topic_id = topic.topic_id LEFT JOIN user ON topiclike.user_id = user.id WHERE = topic.topic_id ', function(err, result, field){
+    const likeTopic = {
+        topic_id: req.body.topic_id,
+        user_id: req.body.user_id,
+        like_topic: 1,
+    }
+    connection.query('SELECT like_topic FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id], function(err, result, field){
         if (err) throw err;
-        if (topiclike.like_topic == 1 ) {
-            res.status(400).json({ message: 'Topic déjà liké !'});
-        } else {
-            connection.query('INSERT INTO topiclike SET like_topic = 1', function(err, result, field) {
+        if (result[0].user_id === req.body.user_id && result[0].topic_id === req.body.topic_id && result[0].like_topic === 0) {
+            connection.query('UPDATE topiclike SET like_topic = 1 WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id],function(err, result, field) {
                 if (err) throw err;
-                res.status(200).json({ message: 'Topic liké !'})
+                res.status(201).json({ message: 'Topic liker !'});
+        })
+        } else if (result[0].user_id === req.body.user_id && result[0].topic_id === req.body.topic_id && result[0].like_topic === 1) {
+            connection.query('UPDATE topiclike SET like_topic = 0 WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id], function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Topic like annuler !'})
+            });
+        } else {
+            connection.query('INSERT INTO topiclike SET ?', [likeTopic], function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Topic like ajouter !'})
             });
         };
     });
 };
 
 exports.topicLike = (req, res, next) => {
-    connection.query('SELECT COUNT(like_topic) FROM topiclike WHERE topic_id ', function(err, result, field) {
+    connection.query('SELECT COUNT(like_topic) FROM topiclike WHERE topic_id = ?', req.body.topic_id, function(err, result, field) {
         if (err) throw err;
-        result.status(200).json( topicLike );
+        res.status(200).json(result[0]);
     });
 };
+
+exports.topicLiked = (req, res, next) => {
+    connection.query('SELECT like_topic FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id], function(err, result, field) {
+        if (err) throw err;
+        res.status(200).json(result)
+    })
+}
 
 // Comment management
 exports.createComment = (req, res, next) => {

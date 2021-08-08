@@ -27,7 +27,10 @@ router.get('/spamComment', auth, topicCtrl.getSpamComment);
 router.post('/spamComment', auth, topicCtrl.cancelSpamComment);
 router.post('/commentSpam', auth, topicCtrl.signalComment);
 router.post('/deleteCommentSpam', auth, topicCtrl.deleteSpamComment);
-// spam route
 
+// Like route
+router.post('/topic/like', auth, topicCtrl.addTopicLike);
+router.post('/topic/count', auth, topicCtrl.topicLike);
+router.post('/topic/liked', auth, topicCtrl.topicLiked);
 
 module.exports = router;

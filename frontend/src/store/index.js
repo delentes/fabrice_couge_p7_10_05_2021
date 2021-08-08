@@ -24,7 +24,6 @@ if (!user) {
       token: '',
     };
   }
-  
 }
 export default createStore({
   state: {
@@ -70,7 +69,18 @@ export default createStore({
     spamsTopic:{
       spamtopic_id: '',
       topic_id: '',
-    }
+    },
+    like:{
+      user_id: '',
+      topic_id: '',
+      like_topic: '',
+    },
+    countLike:{
+      like_topic: '',
+    },
+    liked:{
+      like_topic: '',
+    },
   },
   mutations: {
     setStatus: function (state, status) {
@@ -98,7 +108,7 @@ export default createStore({
     topicStatus: function(state, topic) {
       state.topic = topic;
     },
-    topicInfosStatus: function(state, topicInfos){
+    topicInfosStatus: function(state, topicInfos) {
       state.topicInfos = topicInfos;
     },
     commentsStatus: function(state,comments) {
@@ -110,6 +120,16 @@ export default createStore({
     spamTopicStatus: function(state,spamsTopic) {
       state.spamsTopic = spamsTopic;
     },
+    addLikeTopicStatus: function(state, addLike) {
+      state.addLike = addLike;
+    },
+    countLikeStatus: function(state, countLike) {
+      state.countLike = countLike;
+    },
+    likedStatus: function(state, liked) {
+      state.liked = liked;
+    }
+
   },
   actions: {
     // User logic
@@ -201,8 +221,8 @@ export default createStore({
     },
 
     // Get a topic
-    getOneTopic: ({commit},topic_id) => {
-      instance.get('/topics/topic/'+topic_id)
+    getOneTopic: async ({commit},topic_id) => {
+      await instance.get('/topics/topic/'+topic_id)
       .then((response) => {
         commit('topicInfosStatus', response.data);
       })
@@ -248,13 +268,49 @@ export default createStore({
       })
     },
 
+    // Logical like
+
+    // Add like
+    addLike: ({commit}, like) => {
+      instance.post('/topics/topic/like', like)
+      .then((response) => {
+        commit('likeTopicStatus', response);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+
+    // Count like
+    countLike: ({commit}, Like) => {
+      instance.post('/topics/topic/count', Like)
+      .then((response) => {
+        commit('countLikeStatus', response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+
+    // Liked
+    liked: ({commit}, liked) => {
+      instance.post('/topics/topic/liked', liked)
+      .then ((response) => {
+        
+        commit('likedStatus', response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+
     // Logical comment
 
     // Get comments by topic
     getComment: ({commit},topic_id) => {
       return new Promise((resolve, reject) => {
         instance.get('/topics/comment/'+topic_id)
-        .then((response) => {
+          .then((response) => {
           commit('commentsStatus',response.data);
           resolve(response);
         })
