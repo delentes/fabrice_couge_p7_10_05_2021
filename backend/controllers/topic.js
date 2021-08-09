@@ -98,7 +98,6 @@ exports.addTopicLike = (req, res, next) => {
     }
     connection.query('SELECT * FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.decodedToken.userId], function(err, result, field){
         if (err) throw err;
-        console.log('test result',result[0]);
         if (result[0] == undefined) {
             connection.query('INSERT INTO topiclike SET ?', [likeTopic], function(err, result, field) {
                 if (err) throw err;
@@ -119,7 +118,7 @@ exports.addTopicLike = (req, res, next) => {
 exports.topicLike = (req, res, next) => {
     connection.query('SELECT COUNT(like_topic) FROM topiclike WHERE topic_id = ?', [req.body.topic_id], function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result);
+        res.status(200).json(result[0]);
     });
 };
 
@@ -260,6 +259,13 @@ exports.getSpamComment = (req, res, next) => {
     });
 };
 
+exports.getOneSpamComment = (req, res, next) => {
+    connection.query('SELECT * FROM spam_comment WHERE comment_id = ? AND user_id', [req.params.id, req.body.decodedToken.userId], function(err, result, field) {
+        if (err) throw err;
+        res.status(200).json(result[0])
+    });
+};
+
 exports.cancelSpamComment = (req, res, next) => {
     connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
         if (err) throw err;
@@ -304,7 +310,7 @@ exports.signalTopic = (req, res, next) => {
 };
 
 exports.getSpamTopic = (req, res, next) => {
-    connection.query('SELECT isadmin FROM user WHERE id = ?', req.body.decodedToken.userId, function(err, result, field) {
+    connection.query('SELECT isadmin FROM user WHERE id = ?', [req.body.decodedToken.userId], function(err, result, field) {
         if (err) throw err;
         if (result[0].isadmin ===0) {
             res.status(403).json({ err: 'Vous n\'avez pas les droits d\'administrateur !'});
@@ -314,6 +320,14 @@ exports.getSpamTopic = (req, res, next) => {
                 res.status(200).json(result)
             });
         };
+    });
+};
+
+exports.getOneSpamTopic = (req, res, next) => {
+
+    connection.query('SELECT * FROM spam_topic WHERE topic_id = ? AND user_id = ? ', [req.params.id, req.body.decodedToken.userId], function(err, result, field) {
+        if (err) throw err;
+        res.status(200).json(result[0])
     });
 };
 

@@ -43,7 +43,7 @@ body {
 }
 
 img {
-  max-width: 100%;
+  max-width: 400px;
   border-radius: 8px;
 }
 

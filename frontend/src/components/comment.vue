@@ -12,6 +12,7 @@
             <button v-if="findUser(comment.user_id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
             <button v-if="findUser(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
+        <span v-if="spamComment(comment.comment_id)" >Comment signalé !</span>
         <div v-if="mode == 'modify'">
             <button @click="switchToComment" class="button__modify">Annuler</button>
             <button @click="modifyComment(comment.comment_id)" class="button__sup">Envoyer</button>
@@ -41,9 +42,15 @@ export default {
                 return false;
             }
         },
-
+        spam: function () {
+            if(this.$store.state.oneSpamComment.spamcomment_id != undefined) {
+                return true;
+            } else {
+                return false;
+            }
+        },
         
-        ...mapState(['comments']),
+        ...mapState(['comments','spamsComment']),
     },
     methods: {
         switchToModifyComment: function () {
@@ -82,6 +89,15 @@ export default {
             this.$store.dispatch('deleteComment', {
                 comment_id:comment_id,
             })
+            window.location.reload();
+        },
+        spamComment: async function (comment_id) {
+            await this.$store.dispatch('getOneSpamComment', comment_id)
+            if (this.$store.state.oneSpamComment.spamcomment_id != undefined) {
+                return true;
+            } else {
+                return false;
+            }
         },
         signalSpam: function (comment_id) {
             this.$store.dispatch('signalComment', {

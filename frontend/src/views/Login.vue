@@ -96,7 +96,7 @@ export default {
                 email: this.email,
                 password: this.password,
             }).then (function () {
-                self.$router.push('/');
+                self.$router.push('/topics');
             }).catch (function (error) {
                 console.log(error);
             })

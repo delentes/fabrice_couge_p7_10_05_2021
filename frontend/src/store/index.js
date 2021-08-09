@@ -66,18 +66,26 @@ export default createStore({
       spamcomment_id: '',
       comment_id: '',
     },
+    oneSpamComment:{
+      spamcomment_id: '',
+      comment_id: '',
+      user_id: '',
+    },
     spamsTopic:{
       spamtopic_id: '',
       topic_id: '',
+    },
+    oneSpamTopic:{
+      spamtopic_id: '',
+      topic_id: '',
+      user_id: '',
     },
     like:{
       user_id: '',
       topic_id: '',
       like_topic: '',
     },
-    countLike:{
-      like_topic: '',
-    },
+    countLike: '',
     liked:{
       like_topic: '',
     },
@@ -117,8 +125,14 @@ export default createStore({
     spamCommentStatus: function(state, spamsComment) {
       state.spamsComment = spamsComment;
     },
-    spamTopicStatus: function(state,spamsTopic) {
+    oneSpamCommentStatus: function(state, oneSpamComment) {
+      state.oneSpamComment = oneSpamComment;
+    },
+    spamTopicStatus: function(state, spamsTopic) {
       state.spamsTopic = spamsTopic;
+    },
+    oneSpamTopicStatus: function(state, oneSpamTopic) {
+      state.oneSpamTopic = oneSpamTopic;
     },
     addLikeTopicStatus: function(state, addLike) {
       state.addLike = addLike;
@@ -221,8 +235,8 @@ export default createStore({
     },
 
     // Get a topic
-    getOneTopic: async ({commit},topic_id) => {
-      await instance.get('/topics/topic/'+topic_id)
+    getOneTopic: ({commit},topic_id) => {
+      instance.get('/topics/topic/'+topic_id)
       .then((response) => {
         commit('topicInfosStatus', response.data);
       })
@@ -285,6 +299,7 @@ export default createStore({
     countLike: ({commit}, Like) => {
       instance.post('/topics/topic/count', Like)
       .then((response) => {
+        console.log('countlike',response.data)
         commit('countLikeStatus', response.data);
       })
       .catch((error) => {
@@ -398,7 +413,22 @@ export default createStore({
           resolve(response);
         })
         .catch((error) => {
-          commit('spamCommentStatus', )
+          commit('spamCommentStatus', 'error');
+          reject(error)
+        })
+      })
+    },
+
+    // Get one spam comment
+    getOneSpamComment: ({commit}, comment_id) =>{
+      return new Promise((resolve, reject) => {
+        instance.get('/topics/spamComment/'+comment_id)
+        .then((response) => {
+          commit('oneSpamCommentStatus', response.data);
+          resolve(response);
+        })
+        .catch((error) => {
+          commit('oneSpamCommentStatus', 'error');
           reject(error)
         })
       })
@@ -409,7 +439,7 @@ export default createStore({
     cancelSpamComment:({commit}, spamcomment_id) => {
       instance.post('/topics/spamComment', spamcomment_id)
       .then((response) => {
-        commit('spamCommentStatus', response);
+        commit('SpamCommentStatus', response);
       })
       .catch((error) => {
         console.log(error);
@@ -436,9 +466,24 @@ export default createStore({
           resolve(response);
         })
         .catch((error) => {
-          commit('spamTopicStatus', )
+          commit('spamTopicStatus', 'error_spamTopic' )
           reject(error)
         })
+      })
+    },
+
+    // Get one topic spam
+    getOneSpamTopic: ({commit}, topic_id) =>{
+      return new Promise((resolve, reject) => {
+        instance.get('/topics/spamTopic/'+topic_id)
+      .then((response) => {
+        commit('oneSpamTopicStatus', response.data);
+        resolve(response)
+      })
+      .catch((error) => {
+        commit('oneSpamTopicStatus', 'error_oneSpamTopic')
+        reject(error)
+      })
       })
       
     },

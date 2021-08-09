@@ -20,14 +20,15 @@
             <p class="form-row oneTopic__center">Par : {{topicInfos.firstname}} {{topicInfos.lastname}}</p>
             <div v-if="mode == 'topic'" class="form-row like">
                 <button @click="addLike()" class="button__like" :class="{'button__liked' : liked}">Like</button>
-                <p></p>
-                <!-- géré une varible undefined -->
+                <p>Like: {{countLike}}</p>
+                <!-- géré uicne varible undefined -->
             </div>
             <div v-if="mode == 'topic'">
                 <button @click="signalTopic(topicInfos.topic_id)" class="button__sup">Signaler</button>
                 <button v-show="validateUser" @click="switchToModifyTopic()" class="button__modify">Modifier</button>
                 <button v-show="validateUser" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
             </div>
+            <span v-show = "spam">Topic signalé !</span>
             <div v-if="mode == 'modify'">
                 <button @click="switchToOneTopic()" class="button__sup">Annuler</button>
                 <button @click="modifyTopic(topicInfos.topic_id)" class="button__modify">Envoyer</button>
@@ -69,6 +70,7 @@ export default {
             topic_id: this.$route.params.id,
             user_id: this.$store.state.user.userId,
         })
+        this.$store.dispatch('getOneSpamTopic',this.$route.params.id);
     },
     computed: {
         validateUser: function () {
@@ -85,7 +87,15 @@ export default {
                 return false;
             }
         },
-        ...mapState(['topicInfos'],['countLike'])
+        spam: function () {
+            if(this.$store.state.oneSpamTopic.spamtopic_id != undefined) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        
+        ...mapState(['topicInfos', 'countLike'])
     },
     methods: {
         switchToModifyTopic: function () {
@@ -97,12 +107,12 @@ export default {
         deleteTopic: function (topic_id) {
             this.$store.dispatch('deleteTopic', topic_id)
             this.$router.push('/topics')
+            window.location.reload();
         },
         onFileSelected (event) {
             this.selectedFile = event.target.files[0]
         },
         modifyTopic: async function (topic_id) {
-            const self = this
             const formData = new FormData()
             if (this.selectedFile == '') {
                 formData.append('image', this.selectedFile)
@@ -114,7 +124,7 @@ export default {
             formData.append('topic_id',topic_id)
             await this.$store.dispatch('modifyTopic', formData)
             .then(function() {
-                self.$router.push('/Topics');
+                window.location.reload();
             })
             .catch(function(error) {
                 console.log(error);
@@ -130,10 +140,9 @@ export default {
                 topic_id: this.$store.state.topicInfos.topic_id,
                 user_id: this.$store.state.user.userId,
             })
+            window.location.reload();
         },
     }
-    
-    
 }
 </script>
 <style scoped>
