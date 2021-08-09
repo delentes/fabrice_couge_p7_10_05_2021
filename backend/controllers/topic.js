@@ -41,7 +41,7 @@ exports.getAllTopic = (req, res, next) => {
 };
 
 exports.getOneTopic = (req, res, next) => {
-    connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM topic LEFT JOIN user ON topic.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
         if (err) throw err;
         res.status(200).json(result[0]);
     });
@@ -93,41 +93,40 @@ exports.deleteTopic = (req, res, next) => {
 exports.addTopicLike = (req, res, next) => {
     const likeTopic = {
         topic_id: req.body.topic_id,
-        user_id: req.body.user_id,
+        user_id: req.body.decodedToken.userId,
         like_topic: 1,
     }
-    connection.query('SELECT like_topic FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id], function(err, result, field){
+    connection.query('SELECT * FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.decodedToken.userId], function(err, result, field){
         if (err) throw err;
-        if (result[0].user_id === req.body.user_id && result[0].topic_id === req.body.topic_id && result[0].like_topic === 0) {
-            connection.query('UPDATE topiclike SET like_topic = 1 WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id],function(err, result, field) {
-                if (err) throw err;
-                res.status(201).json({ message: 'Topic liker !'});
-        })
-        } else if (result[0].user_id === req.body.user_id && result[0].topic_id === req.body.topic_id && result[0].like_topic === 1) {
-            connection.query('UPDATE topiclike SET like_topic = 0 WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id], function(err, result, field) {
-                if (err) throw err;
-                res.status(200).json({ message: 'Topic like annuler !'})
-            });
-        } else {
+        console.log('test result',result[0]);
+        if (result[0] == undefined) {
             connection.query('INSERT INTO topiclike SET ?', [likeTopic], function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json({ message: 'Topic like ajouter !'})
             });
-        };
-    });
+        } else if (result[0].user_id === req.body.decodedToken.userId && result[0].topic_id === req.body.topic_id) {
+            connection.query('DELETE FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.decodedToken.userId], function(err, result, field) {
+                if (err) throw err;
+                res.status(200).json({ message: 'Topic like annuler !'})
+            
+            }); 
+        } else {
+            res.status(400).json({error: new Error('Invalid request!')});
+        }
+    })
 };
 
 exports.topicLike = (req, res, next) => {
-    connection.query('SELECT COUNT(like_topic) FROM topiclike WHERE topic_id = ?', req.body.topic_id, function(err, result, field) {
+    connection.query('SELECT COUNT(like_topic) FROM topiclike WHERE topic_id = ?', [req.body.topic_id], function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result[0]);
+        res.status(200).json(result);
     });
 };
 
 exports.topicLiked = (req, res, next) => {
     connection.query('SELECT like_topic FROM topiclike WHERE topic_id = ? AND user_id = ?', [req.body.topic_id, req.body.user_id], function(err, result, field) {
         if (err) throw err;
-        res.status(200).json(result)
+        res.status(200).json(result[0]);
     })
 }
 
@@ -151,8 +150,9 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.getAllComment = (req, res, next) => {
-    connection.query('SELECT * FROM comment LEFT JOIN topic ON comment.topic_id = topic.topic_id LEFT JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM comment INNER JOIN topic ON comment.topic_id = topic.topic_id INNER JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
         if (err) throw err;
+
         if (result.length === 0) {
             res.status(204).json({ message: 'Aucun commentaire'})
         } else {

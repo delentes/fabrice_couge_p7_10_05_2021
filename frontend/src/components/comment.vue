@@ -31,7 +31,7 @@ export default {
     },
     
     mounted: function () {
-        this.$store.dispatch('getComment',this.$store.state.topicInfos.topic_id)
+        this.$store.dispatch('getComment', this.$route.params.id)
     },
     computed: {
         findcomment: function () {

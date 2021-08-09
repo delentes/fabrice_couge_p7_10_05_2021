@@ -18,8 +18,8 @@
             </div>
             <img v-if="mode == 'topic'" class="oneTopic__center" v-bind:src="topicInfos.image_url" alt="">
             <p class="form-row oneTopic__center">Par : {{topicInfos.firstname}} {{topicInfos.lastname}}</p>
-            <div v-if="mode == 'topic'" class="form-row">
-                <button class="button__like" :class="{'button__liked' : liked}">Like</button>
+            <div v-if="mode == 'topic'" class="form-row like">
+                <button @click="addLike()" class="button__like" :class="{'button__liked' : liked}">Like</button>
                 <p></p>
                 <!-- géré une varible undefined -->
             </div>
@@ -63,13 +63,12 @@ export default {
     mounted: function () {
         this.$store.dispatch('getOneTopic', this.$route.params.id)
         this.$store.dispatch('countLike', {
-            topic_id: this.$store.state.topicInfos.topic_id,
+            topic_id: this.$route.params.id,
         })
         this.$store.dispatch('liked', {
-            topic_id: this.$store.state.topicInfos.topic_id,
+            topic_id: this.$route.params.id,
             user_id: this.$store.state.user.userId,
         })
-        console.log(this.$store.state.liked)
     },
     computed: {
         validateUser: function () {
@@ -192,5 +191,8 @@ export default {
   .button__liked:hover {
     cursor:pointer;
     background: green;
+  }
+  .like {
+      justify-content: flex-end;
   }
 </style>

@@ -274,7 +274,7 @@ export default createStore({
     addLike: ({commit}, like) => {
       instance.post('/topics/topic/like', like)
       .then((response) => {
-        commit('likeTopicStatus', response);
+        commit('addLikeTopicStatus', response);
       })
       .catch((error) => {
         console.log(error);
@@ -433,7 +433,6 @@ export default createStore({
         instance.get('/topics/spamTopic')
         .then((response) => {
           commit('spamTopicStatus', response.data);
-          console.log(response.data);
           resolve(response);
         })
         .catch((error) => {

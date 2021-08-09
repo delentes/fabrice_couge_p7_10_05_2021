@@ -10,7 +10,7 @@
                 <button @click="addAdmin(user.id)" class="button__admin">Ajouter un administrateur</button>
             </div>
         </div>
-        <div>
+        <div class="">
             <h3 class="card__subtitle">Gestion des spam</h3>
             <div v-show= "findSpamComment" class="card" v-for="spam of spamsComment" :key="spam.spamcomment_id">
                 <p>{{spam.comment}}</p>
@@ -105,5 +105,6 @@ export default {
         flex-wrap: wrap;
         margin: 10px;
     }
+    
 </style>
 
