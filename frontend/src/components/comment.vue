@@ -8,9 +8,9 @@
         </div>
             <p class="form-row">Par : {{comment.firstname}} {{comment.lastname}}</p>
         <div v-if="mode == 'comment'" class="form-row">
-            <button v-if="!findUserComment(comment.user_id)" @click="signalSpam(comment.comment_id)" class="button__modify">Signaler</button>
-            <button v-if="findUserComment(comment.user_id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
-            <button v-if="findUserComment(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
+            <button v-if="!findUserComment()" @click="signalSpam(comment.comment_id)" class="button__modify">Signaler</button>
+            <button v-if="findUserComment()" @click="switchToModifyComment" class="button__modify">Modifier</button>
+            <button v-if="findUserComment()" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
         <div v-if="mode == 'modify'">
             <button @click="switchToComment" class="button__modify">Annuler</button>
@@ -50,8 +50,8 @@ export default {
         switchToComment: function () {
             this.mode = 'comment';
         },
-        findUserComment: function (user_id) {
-            if (this.$store.state.user.userId == user_id) {
+        findUserComment: function () {
+            if (this.$store.state.user.userId == this.$store.state.comments.user_id) {
                 return true;
             } else {
                 return false;
