@@ -21,7 +21,6 @@
             <div v-if="mode == 'topic'" class="form-row like">
                 <button @click="addLike()" class="button__like" :class="{'button__liked' : liked}">Like</button>
                 <p>Like: {{countLike}}</p>
-                <!-- géré uicne varible undefined -->
             </div>
             <div v-if="mode == 'topic'">
                 <button @click="signalTopic(topicInfos.topic_id)" class="button__sup">Signaler</button>
