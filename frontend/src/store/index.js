@@ -299,7 +299,6 @@ export default createStore({
     countLike: ({commit}, Like) => {
       instance.post('/topics/topic/count', Like)
       .then((response) => {
-        console.log('countlike',response.data)
         commit('countLikeStatus', response.data);
       })
       .catch((error) => {

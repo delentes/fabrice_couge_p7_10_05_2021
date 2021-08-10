@@ -1,9 +1,9 @@
 <template>
     <nav>
         <router-link  to = "/">Accueil </router-link>
-        <router-link  to = "/login">| Se connecter </router-link>
+        <router-link v-show = "switchNoLogin" to = "/login">| Se connecter </router-link>
         <router-link v-show = "switchLogin" to = "/profile">| Vos infos </router-link>
-        <router-link v-show = "switchLogin" to = "/Topics">| Rejoindre les discutions </router-link>
+        <router-link v-show = "switchLogin" to = "/Topics">| Rejoindre les sujets </router-link>
         <router-link v-show = "switchAdmin" to = "/admin">| Page administrateur </router-link>
     </nav>
 </template>
@@ -17,6 +17,13 @@ export default {
     computed: {
         switchLogin: function () {
             if (this.$store.state.user.userId != -1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        switchNoLogin: function () {
+            if (this.$store.state.user.userId == -1) {
                 return true;
             } else {
                 return false;

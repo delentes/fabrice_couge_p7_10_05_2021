@@ -30,7 +30,7 @@ exports.createTopic = (req, res, next) => {
 };
 
 exports.getAllTopic = (req, res, next) => {
-    connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id',function(err, result, field) {
+    connection.query('SELECT * FROM topic INNER JOIN user ON topic.user_id = user.id ORDER BY topic_creation_date DESC',function(err, result, field) {
         if (err) throw err;
         if (result.length === 0) {
             res.status(204).json({ message: 'Aucun topic'})
@@ -149,7 +149,7 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.getAllComment = (req, res, next) => {
-    connection.query('SELECT * FROM comment INNER JOIN topic ON comment.topic_id = topic.topic_id INNER JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ?', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM comment INNER JOIN topic ON comment.topic_id = topic.topic_id INNER JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ? ORDER BY comment_creation_date DESC ', [req.params.id], function(err, result, field) {
         if (err) throw err;
 
         if (result.length === 0) {

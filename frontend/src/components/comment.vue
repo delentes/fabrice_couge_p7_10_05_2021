@@ -8,11 +8,10 @@
         </div>
             <p class="form-row">Par : {{comment.firstname}} {{comment.lastname}}</p>
         <div v-if="mode == 'comment'" class="form-row">
-            <button @click="signalSpam(comment.comment_id)" class="button__sup">Signaler</button>
-            <button v-if="findUser(comment.user_id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
-            <button v-if="findUser(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
+            <button v-if="!findUserComment(comment.user_id)" @click="signalSpam(comment.comment_id)" class="button__modify">Signaler</button>
+            <button v-if="findUserComment(comment.user_id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
+            <button v-if="findUserComment(comment.user_id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
-        <span v-if="spamComment(comment.comment_id)" >Comment signalé !</span>
         <div v-if="mode == 'modify'">
             <button @click="switchToComment" class="button__modify">Annuler</button>
             <button @click="modifyComment(comment.comment_id)" class="button__sup">Envoyer</button>
@@ -42,7 +41,7 @@ export default {
                 return false;
             }
         },
-        ...mapState(['comments','spamsComment']),
+        ...mapState(['comments','spamsComment',]),
     },
     methods: {
         switchToModifyComment: function () {
@@ -51,7 +50,7 @@ export default {
         switchToComment: function () {
             this.mode = 'comment';
         },
-        findUser: function (user_id) {
+        findUserComment: function (user_id) {
             if (this.$store.state.user.userId == user_id) {
                 return true;
             } else {
@@ -82,14 +81,6 @@ export default {
                 comment_id:comment_id,
             })
             window.location.reload();
-        },
-        spamComment: async function (comment_id) {
-            await this.$store.dispatch('getOneSpamComment', comment_id)
-            if (this.$store.state.oneSpamComment.spamcomment_id == this.spamsComment.spamcomment_id) {
-                return true;
-            } else {
-                return false;
-            }
         },
         signalSpam: function (comment_id) {
             this.$store.dispatch('signalComment', {

@@ -1,6 +1,6 @@
 <template>
     <div class="topics" >
-        <h1 class="card__title">Sujet de discution</h1>
+        <h1 class="card__title">Sujet</h1>
         <button @click="createTopic()" class="button">Poster un sujet</button>
         <div class="card" v-for="topic of topics" :key ="topic.topic_id">
             <a @click="getOneTopic(topic.topic_id)" class="link" >

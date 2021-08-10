@@ -149,7 +149,7 @@ img {
     font-size: 15px;
     border: none;
     width: 30%;
-    padding: 16px;
+    padding: 10px;
     transition: .4s background-color;
     margin-left: 5px;
   }
@@ -165,7 +165,7 @@ img {
     font-size: 15px;
     border: none;
     width: 30%;
-    padding: 16px;
+    padding: 10px;
     transition: .4s background-color;
     margin-left: 5px;
   }

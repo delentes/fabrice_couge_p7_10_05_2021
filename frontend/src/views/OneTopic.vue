@@ -23,9 +23,9 @@
                 <p>Like: {{countLike.like_topic}}</p>
             </div>
             <div v-if="mode == 'topic'">
-                <button @click="signalTopic(topicInfos.topic_id)" class="button__sup">Signaler</button>
-                <button v-show="validateUser" @click="switchToModifyTopic()" class="button__modify">Modifier</button>
-                <button v-show="validateUser" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
+                <button v-if="!findUser(topicInfos.user_id)" @click="signalTopic(topicInfos.topic_id)" class="button__modify">Signaler</button>
+                <button v-if="findUser(topicInfos.user_id)" @click="switchToModifyTopic()" class="button__modify">Modifier</button>
+                <button v-if="findUser(topicInfos.user_id)" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
             </div>
             <span v-show = "spam">Topic signalé !</span>
             <div v-if="mode == 'modify'">
@@ -33,6 +33,7 @@
                 <button @click="modifyTopic(topicInfos.topic_id)" class="button__modify">Envoyer</button>
             </div>
         </div>
+        <h3 class="card__subtitle">Commentaire</h3>
         <div class="comment">
             <comment></comment>
         </div>
@@ -73,13 +74,6 @@ export default {
         this.title = this.topicInfos.title
     },
     computed: {
-        validateUser: function () {
-            if(this.$store.state.user.userId === this.$store.state.topicInfos.user_id) {
-                return true;
-            } else {
-                return false;
-            }
-        },
         liked: function () {
             if(this.$store.state.liked.like_topic == 1) {
                 return true;
@@ -111,6 +105,13 @@ export default {
         },
         onFileSelected (event) {
             this.selectedFile = event.target.files[0]
+        },
+        findUser: function (user_id) {
+            if (this.$store.state.user.userId == user_id) {
+                return true;
+            } else {
+                return false;
+            }
         },
         modifyTopic: async function (topic_id) {
             const formData = new FormData()
@@ -176,10 +177,9 @@ export default {
     font-weight: 600;
     font-size: 15px;
     border: none;
-    width: 20%;
-    padding: 10px;
+    padding: 0;
+    width: 15%;
     transition: .4s background-color;
-    margin-left: 5px;
   }
   .button__like:hover {
     cursor:pointer;
@@ -192,10 +192,9 @@ export default {
     font-weight: 600;
     font-size: 15px;
     border: none;
-    width: 20%;
-    padding: 10px;
+    width: 15%;
+    padding: 0;
     transition: .4s background-color;
-    margin-left: 5px;
   }
   .button__liked:hover {
     cursor:pointer;
