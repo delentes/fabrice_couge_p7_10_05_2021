@@ -42,14 +42,6 @@ export default {
                 return false;
             }
         },
-        spam: function () {
-            if(this.$store.state.oneSpamComment.spamcomment_id != undefined) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-        
         ...mapState(['comments','spamsComment']),
     },
     methods: {
@@ -93,7 +85,7 @@ export default {
         },
         spamComment: async function (comment_id) {
             await this.$store.dispatch('getOneSpamComment', comment_id)
-            if (this.$store.state.oneSpamComment.spamcomment_id != undefined) {
+            if (this.$store.state.oneSpamComment.spamcomment_id == this.spamsComment.spamcomment_id) {
                 return true;
             } else {
                 return false;

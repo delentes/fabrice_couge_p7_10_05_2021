@@ -116,7 +116,7 @@ exports.addTopicLike = (req, res, next) => {
 };
 
 exports.topicLike = (req, res, next) => {
-    connection.query('SELECT COUNT(like_topic) FROM topiclike WHERE topic_id = ?', [req.body.topic_id], function(err, result, field) {
+    connection.query('SELECT COUNT(like_topic) AS like_topic FROM topiclike WHERE topic_id = ?', [req.body.topic_id], function(err, result, field) {
         if (err) throw err;
         res.status(200).json(result[0]);
     });

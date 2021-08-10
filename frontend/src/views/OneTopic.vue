@@ -20,7 +20,7 @@
             <p class="form-row oneTopic__center">Par : {{topicInfos.firstname}} {{topicInfos.lastname}}</p>
             <div v-if="mode == 'topic'" class="form-row like">
                 <button @click="addLike()" class="button__like" :class="{'button__liked' : liked}">Like</button>
-                <p>Like: {{countLike}}</p>
+                <p>Like: {{countLike.like_topic}}</p>
             </div>
             <div v-if="mode == 'topic'">
                 <button @click="signalTopic(topicInfos.topic_id)" class="button__sup">Signaler</button>
@@ -70,6 +70,7 @@ export default {
             user_id: this.$store.state.user.userId,
         })
         this.$store.dispatch('getOneSpamTopic',this.$route.params.id);
+        this.title = this.topicInfos.title
     },
     computed: {
         validateUser: function () {
