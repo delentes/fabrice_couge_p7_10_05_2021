@@ -7,5 +7,5 @@ If the server runs on another port for any reason, this is printed to the
 console when the server starts, e.g. `Listening on port 3001`.
 
 From within the frontend, run `npm install`
-run `npm install` vuejs with `npm run serve`.
-Go to `http: // localhost: 8080 /`
+run `npm install`
+Go to `http: // localhost: 8080`
