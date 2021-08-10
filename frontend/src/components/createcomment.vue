@@ -1,7 +1,7 @@
 <template>
     <div class="createComment">
         <div class="card">
-            <h1 class="card__subtitle">Ajouter un commentaire</h1>
+            <h2 class="card__subtitle">Ajouter un commentaire</h2>
             <div class="form-row">
                 <input v-model="comment" class="form-row__input" type="text" placeholder="Votre commentaire">
             </div>

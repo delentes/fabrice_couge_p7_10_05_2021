@@ -6,23 +6,23 @@
             <div class="card" v-for="user of usersInfos" :key="user.id">
                 <p>{{user.lastname}} {{user.firstname}}</p>
                 <p>{{user.email}}</p>
+                <button @click="addAdmin(user.id)" class="button__blue__admin">Ajouter un administrateur</button>
                 <button @click="deleteUser(user.id)" class="button__admin">Supprimé l'utilisateur</button>
-                <button @click="addAdmin(user.id)" class="button__admin">Ajouter un administrateur</button>
             </div>
         </div>
         <div class="">
-            <h3 class="card__subtitle">Gestion des spam</h3>
+            <h3 class="card__subtitle">Gestion des sujets et commentaires</h3>
             <div v-show= "findSpamComment" class="card" v-for="spam of spamsComment" :key="spam.spamcomment_id">
                 <p>{{spam.comment}}</p>
                 <p>signalé par {{spam.lastname}} {{spam.firstname}}</p>
-                <button @click="cancelSpamComment(spam.spamcomment_id)" class="button__admin">Annuler</button>
+                <button @click="cancelSpamComment(spam.spamcomment_id)" class="button__blue__admin">Annuler</button>
                 <button @click="deleteSpamComment(spam.spamcomment_id,spam.comment_id)" class="button__admin">Supprimer</button>
             </div>
             <div v-show= "findSpamTopic" class="card" v-for="spamTopic of spamsTopic" :key="spamTopic.spamtopic_id">
                 <h4>{{spamTopic.title}}</h4>
                 <p>{{spamTopic.topic}}</p>
                 <p>signalé par {{spamTopic.lastname}} {{spamTopic.firstname}}</p>
-                <button @click="cancelSpamTopic(spamTopic.spamtopic_id)" class="button__admin">Annuler</button>
+                <button @click="cancelSpamTopic(spamTopic.spamtopic_id)" class="button__blue__admin">Annuler</button>
                 <button @click="deleteSpamTopic(spamTopic.spamtopic_id,spamTopic.topic_id)" class="button__admin">Supprimer</button>
             </div>
         </div>

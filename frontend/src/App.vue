@@ -133,13 +133,29 @@ img {
     font-size: 15px;
     border: none;
     width: 45%;
-    padding: 16px;
+    padding: 10px;
     transition: .4s background-color;
     margin-left: 5px;
   }
   .button__admin:hover {
     cursor:pointer;
     background: #9e0e40;
+  }
+  .button__blue__admin {
+    background: #2196F3;
+    color:white;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    border: none;
+    width: 45%;
+    padding: 10px;
+    transition: .4s background-color;
+    margin-right: 10px;
+  }
+  .button__blue__admin:hover {
+    cursor:pointer;
+    background: #1976D2;
   }
   .button__modify {
     background: #2196F3;
@@ -173,4 +189,10 @@ img {
     cursor:pointer;
     background: #9e0e40;
   }
+  .navbar{
+        text-decoration: none;
+        padding: 20px;
+        font-weight: 900;
+        color:rgb(63, 61, 61);
+    }
 </style>

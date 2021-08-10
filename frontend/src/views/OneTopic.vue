@@ -2,7 +2,7 @@
     <div>
         <h1 class="card__title">Sujet de discution</h1>
         <div class="card">
-            <h1 class="card__subtitle" v-if="mode == 'topic'">{{topicInfos.title}}</h1>
+            <h2 class="card__subtitle" v-if="mode == 'topic'">{{topicInfos.title}}</h2>
             <div>
                 <input class="form-row__input" v-if="mode == 'modify'"  v-model="title" type="text" placeholder="">
             </div>
@@ -72,6 +72,7 @@ export default {
         })
         this.$store.dispatch('getOneSpamTopic',this.$route.params.id);
         this.title = this.topicInfos.title
+        this.topic = this.topicInfos.topic
     },
     computed: {
         liked: function () {

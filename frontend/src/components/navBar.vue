@@ -1,10 +1,10 @@
 <template>
     <nav>
-        <router-link  to = "/">Accueil </router-link>
-        <router-link v-show = "switchNoLogin" to = "/login">| Se connecter </router-link>
-        <router-link v-show = "switchLogin" to = "/profile">| Vos infos </router-link>
-        <router-link v-show = "switchLogin" to = "/Topics">| Rejoindre les sujets </router-link>
-        <router-link v-show = "switchAdmin" to = "/admin">| Page administrateur </router-link>
+        <router-link class="navbar"  to = "/">Accueil </router-link>
+        <router-link class="navbar" v-show = "switchNoLogin" to = "/login"> Se connecter </router-link>
+        <router-link class="navbar" v-show = "switchLogin" to = "/profile"> Vos infos </router-link>
+        <router-link class="navbar" v-show = "switchLogin" to = "/Topics"> Rejoindre les sujets </router-link>
+        <router-link class="navbar" v-show = "switchAdmin" to = "/admin"> Page administrateur </router-link>
     </nav>
 </template>
 <script>
@@ -41,6 +41,3 @@ export default {
 }
 
 </script>
-<style scoped>
-
-</style>
