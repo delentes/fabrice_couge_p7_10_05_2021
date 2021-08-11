@@ -169,8 +169,6 @@ exports.modifyComment = (req, res, next) => {
         };
     connection.query('SELECT * FROM comment WHERE user_id = ? AND comment_id = ?', [req.body.user_id,req.body.comment_id], function(err, result, field) {
         if (err) throw err;
-        console.log('test result', result[0].user_id)
-        console.log('test req.body 2', req.body.user_id)
         if (req.body.user_id == result[0].user_id) {
             connection.query('UPDATE comment SET ? WHERE comment_id = ?', [commentObject, result[0].comment_id], function(err, result, field) {
                 if (err) throw err;

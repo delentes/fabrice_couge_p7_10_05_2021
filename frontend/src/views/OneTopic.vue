@@ -19,7 +19,7 @@
             <img v-if="mode == 'topic'" class="oneTopic__center" v-bind:src="topicInfos.image_url" alt="">
             <p class="form-row oneTopic__center">Par : {{topicInfos.firstname}} {{topicInfos.lastname}}</p>
             <div v-if="mode == 'topic'" class="form-row like">
-                <button @click="addLike()" class="button__like" :class="{'button__liked' : liked}">Like</button>
+                <button @click="addLike()" aria-label="like" class="button__like" :class="{'button__liked' : liked}">Like</button>
                 <p>Like: {{countLike.like_topic}}</p>
             </div>
             <div v-if="mode == 'topic'">
