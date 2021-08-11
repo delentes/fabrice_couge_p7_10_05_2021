@@ -26,14 +26,13 @@ export default {
     data: function() {
         return {
             mode: 'comment',
-            comment: '',
             commentModify: '',
         }
     },
     
     mounted: function () {
         this.$store.dispatch('getComment', this.$route.params.id)
-        this.comment = this.comment.comment
+        this.commentModify = this.comment
     },
     computed: {
         findcomment: function () {

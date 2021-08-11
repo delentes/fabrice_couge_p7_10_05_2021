@@ -162,10 +162,10 @@ exports.getAllComment = (req, res, next) => {
 exports.modifyComment = (req, res, next) => {
     const commentObject = req.file ? 
         {
-            comment: escape(req.body.comment),
+            comment: req.body.comment,
             image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : {
-            comment: escape(req.body.comment)
+            comment: req.body.comment
         };
         console.log('test body',req.body)
     connection.query('SELECT * FROM comment WHERE user_id = ? AND comment_id = ?', [req.body.user_id,req.body.comment_id], function(err, result, field) {
