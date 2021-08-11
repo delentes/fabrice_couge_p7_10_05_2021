@@ -8,13 +8,13 @@
         </div>
             <p class="form-row">Par : {{comment.firstname}} {{comment.lastname}}</p>
         <div v-if="mode == 'comment'" class="form-row">
-            <button v-if="!findUserComment(comment.id)" @click="signalSpam(comment.comment_id)" class="button__modify">Signaler</button>
-            <button v-if="findUserComment(comment.id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
-            <button v-if="findUserComment(comment.id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
+            <button v-if="!findUserComment(comment.id)" aria-label="signaler commentaire" @click="signalSpam(comment.comment_id)" class="button__modify">Signaler</button>
+            <button v-if="findUserComment(comment.id)" aria-label="modifier commentaire" @click="switchToModifyComment" class="button__modify">Modifier</button>
+            <button v-if="findUserComment(comment.id)" aria-label="supprimer commentaire" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
         <div v-if="mode == 'modify'" class="form-row">
-            <button @click="switchToComment" class="button__modify">Annuler</button>
-            <button @click="modifyComment(comment.comment_id,comment.topic_id)" class="button__modify">Envoyer</button>
+            <button @click="switchToComment" aria-label="annuler modification" class="button__modify">Annuler</button>
+            <button @click="modifyComment(comment.comment_id,comment.topic_id)" aria-label="envoyer modification" class="button__modify">Envoyer</button>
         </div>
     </div>
 </template>

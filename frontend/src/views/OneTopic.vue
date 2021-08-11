@@ -23,14 +23,14 @@
                 <p>Like: {{countLike.like_topic}}</p>
             </div>
             <div v-if="mode == 'topic'">
-                <button v-if="!findUser(topicInfos.user_id)" @click="signalTopic(topicInfos.topic_id)" class="button__modify">Signaler</button>
-                <button v-if="findUser(topicInfos.user_id)" @click="switchToModifyTopic()" class="button__modify">Modifier</button>
-                <button v-if="findUser(topicInfos.user_id)" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
+                <button v-if="!findUser(topicInfos.user_id)" aria-label="signaler topic" @click="signalTopic(topicInfos.topic_id)" class="button__modify">Signaler</button>
+                <button v-if="findUser(topicInfos.user_id)" aria-label="modifier topic" @click="switchToModifyTopic()" class="button__modify">Modifier</button>
+                <button v-if="findUser(topicInfos.user_id)" aria-label="supprimer topic" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
             </div>
             <span v-show = "spam">Topic signalé !</span>
             <div class="form-row" v-if="mode == 'modify'">
-                <button @click="switchToOneTopic()" class="button__sup">Annuler</button>
-                <button @click="modifyTopic(topicInfos.topic_id)" class="button__modify">Envoyer</button>
+                <button @click="switchToOneTopic()" aria-label="annuler modification" class="button__sup">Annuler</button>
+                <button @click="modifyTopic(topicInfos.topic_id)" aria-label="envoyer modification" class="button__modify">Envoyer</button>
             </div>
         </div>
         <h3 class="card__subtitle">Commentaire</h3>
