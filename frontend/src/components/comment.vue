@@ -14,7 +14,7 @@
         </div>
         <div v-if="mode == 'modify'" class="form-row">
             <button @click="switchToComment" class="button__modify">Annuler</button>
-            <button @click="modifyComment(comment.comment_id,comment.topic_id)" class="button__sup">Envoyer</button>
+            <button @click="modifyComment(comment.comment_id,comment.topic_id)" class="button__modify">Envoyer</button>
         </div>
     </div>
 </template>
