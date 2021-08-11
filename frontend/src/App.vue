@@ -167,7 +167,8 @@ img {
     width: 30%;
     padding: 10px;
     transition: .4s background-color;
-    margin-left: 5px;
+    margin-bottom: 10px;
+    
   }
   .button__modify:hover {
     cursor:pointer;
@@ -184,6 +185,7 @@ img {
     padding: 10px;
     transition: .4s background-color;
     margin-left: 5px;
+    margin-bottom: 10px;
   }
   .button__sup:hover {
     cursor:pointer;

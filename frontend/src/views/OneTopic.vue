@@ -196,6 +196,7 @@ export default {
     width: 15%;
     padding: 0;
     transition: .4s background-color;
+    margin-bottom: 10px;
   }
   .button__liked:hover {
     cursor:pointer;

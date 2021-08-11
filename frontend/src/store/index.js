@@ -324,7 +324,6 @@ export default createStore({
       return new Promise((resolve, reject) => {
         instance.get('/topics/comment/'+topic_id)
           .then((response) => {
-            console.log(response.data);
             commit('commentsStatus',response.data);
             resolve(response);
         })

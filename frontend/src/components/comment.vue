@@ -53,7 +53,6 @@ export default {
             this.mode = 'comment';
         },
         findUserComment: function (user_id) {
-            console.log('user.user_id',this.$store.state.user.userId,'comment.user_id',user_id)
             if (this.$store.state.user.userId === user_id) {
                 return true;
             } else {
