@@ -32,7 +32,6 @@ export default {
     
     mounted: function () {
         this.$store.dispatch('getComment', this.$route.params.id)
-        this.commentModify = this.comment
     },
     computed: {
         findcomment: function () {
