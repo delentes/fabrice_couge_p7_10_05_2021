@@ -6,7 +6,7 @@
                 <input v-model="comment" class="form-row__input" type="text" placeholder="Votre commentaire">
             </div>
             <div class="form-row">
-                <input @change="onFileSelected" class="form-row__input" type="file" accept="image/png, image/jpg, image/jpeg, image/gif">
+                <input @change="onFileSelected" class="form-row__input" type="file" name="image" id="file" accept="image/png, image/jpg, image/jpeg, image/gif">
             </div>
             <div class="form-row">
                 <button @click="createComment(topicInfos.topic_id)" class="button" :class="{'button--disabled' : !validatedFields}">Envoyer</button>

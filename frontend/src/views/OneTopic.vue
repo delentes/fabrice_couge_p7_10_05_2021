@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="card__title">Sujet de discution</h1>
+        <h1 class="card__title">Sujet de discussion</h1>
         <div class="card">
             <h2 class="card__subtitle" v-if="mode == 'topic'">{{topicInfos.title}}</h2>
             <div>

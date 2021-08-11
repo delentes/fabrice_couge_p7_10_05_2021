@@ -247,7 +247,6 @@ export default createStore({
 
     // Modify topic
     modifyTopic: async ({commit},formData) => {
-      console.log(formData)
       await instance.post('/topics/topic/modify',formData)
       .then((response) => {
         commit('topicInfosStatus', response.data);
@@ -325,8 +324,9 @@ export default createStore({
       return new Promise((resolve, reject) => {
         instance.get('/topics/comment/'+topic_id)
           .then((response) => {
-          commit('commentsStatus',response.data);
-          resolve(response);
+            console.log(response.data);
+            commit('commentsStatus',response.data);
+            resolve(response);
         })
         .catch((error) => {
           reject(error);

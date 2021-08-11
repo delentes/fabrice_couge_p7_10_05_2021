@@ -149,9 +149,8 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.getAllComment = (req, res, next) => {
-    connection.query('SELECT * FROM comment INNER JOIN topic ON comment.topic_id = topic.topic_id INNER JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ? ORDER BY comment_creation_date DESC ', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM comment LEFT JOIN topic ON comment.topic_id = topic.topic_id LEFT JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ? ORDER BY comment_creation_date DESC ', [req.params.id], function(err, result, field) {
         if (err) throw err;
-
         if (result.length === 0) {
             res.status(204).json({ message: 'Aucun commentaire'})
         } else {
@@ -159,6 +158,7 @@ exports.getAllComment = (req, res, next) => {
         }
     })
 };
+
 
 exports.modifyComment = (req, res, next) => {
     const commentObject = req.file ? 
