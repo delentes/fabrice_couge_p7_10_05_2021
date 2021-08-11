@@ -28,7 +28,7 @@
                 <button v-if="findUser(topicInfos.user_id)" @click="deleteTopic(topicInfos.topic_id)" class="button__sup">Supprimer</button>
             </div>
             <span v-show = "spam">Topic signalé !</span>
-            <div v-if="mode == 'modify'">
+            <div class="form-row" v-if="mode == 'modify'">
                 <button @click="switchToOneTopic()" class="button__sup">Annuler</button>
                 <button @click="modifyTopic(topicInfos.topic_id)" class="button__modify">Envoyer</button>
             </div>
@@ -115,8 +115,9 @@ export default {
             }
         },
         modifyTopic: async function (topic_id) {
+            const self = this
             const formData = new FormData()
-            if (this.selectedFile == '') {
+            if (this.selectedFile) {
                 formData.append('image', this.selectedFile)
                 formData.append('name', this.selectedFile.name)
             }
@@ -126,6 +127,7 @@ export default {
             formData.append('topic_id',topic_id)
             await this.$store.dispatch('modifyTopic', formData)
             .then(function() {
+                self.selectedFile = '';
                 window.location.reload();
             })
             .catch(function(error) {
@@ -150,6 +152,7 @@ export default {
 <style scoped>
     .form-row {
         display: flex;
+        justify-content: center;
         margin: 16px 0px;
         gap: 16px;
         flex-wrap: wrap;

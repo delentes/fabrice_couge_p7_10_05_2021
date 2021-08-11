@@ -13,8 +13,8 @@ const connection = mysql.createConnection({
 // Topic management
 exports.createTopic = (req, res, next) => {
     const record = {
-        title: escape(req.body.title),
-        topic: escape(req.body.topic),
+        title: req.body.title,
+        topic: req.body.topic,
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
         user_id: escape(req.body.user_id)
     }
@@ -59,7 +59,6 @@ exports.modifyTopic = (req, res, next) => {
     };
     connection.query('SELECT user_id FROM topic WHERE user_id = ?', req.body.user_id, function(err, result, field) {
         if (err) throw err;
-        console.log('req.body.user_id',req.body.user_id,'test result',result[0]);
         if (req.body.user_id == result[0].user_id) {
             connection.query('UPDATE topic SET ? WHERE topic.topic_id = ?', [topicObject, req.body.topic_id] , function(err, result, field) {
                 if (err) throw err;
@@ -135,7 +134,7 @@ exports.createComment = (req, res, next) => {
     {
         comment: req.body.comment,
         image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        topic_id: escape(req.body.topic_id),
+        topic_id: req.body.topic_id,
         user_id: req.body.user_id
     } : {
         comment: req.body.comment,
@@ -149,7 +148,7 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.getAllComment = (req, res, next) => {
-    connection.query('SELECT * FROM comment LEFT JOIN topic ON comment.topic_id = topic.topic_id LEFT JOIN user ON comment.user_id = user.id WHERE topic.topic_id = ? ORDER BY comment_creation_date DESC ', [req.params.id], function(err, result, field) {
+    connection.query('SELECT * FROM comment LEFT JOIN user ON comment.user_id = user.id WHERE comment.topic_id = ? ORDER BY comment_creation_date DESC ', [req.params.id], function(err, result, field) {
         if (err) throw err;
         if (result.length === 0) {
             res.status(204).json({ message: 'Aucun commentaire'})
@@ -168,10 +167,12 @@ exports.modifyComment = (req, res, next) => {
         } : {
             comment: escape(req.body.comment)
         };
-    connection.query('SELECT user_id FROM comment WHERE id = ?', req.body.user_id, function(err, result, field) {
+        console.log('test body',req.body)
+    connection.query('SELECT * FROM comment WHERE user_id = ? AND comment_id = ?', [req.body.user_id,req.body.comment_id], function(err, result, field) {
         if (err) throw err;
+        console.log('test result', result[0])
         if (req.body.user_id === result[0].user_id) {
-            connection.query('UPDATE comment SET ? WHERE comment.comment_id = ?', [commentObject, req.body.comment_id], function(err, result, field) {
+            connection.query('UPDATE comment SET ? WHERE comment_id = ?', [commentObject, result[0].comment_id], function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json({ message: 'Commentaire modifié !'});
             });
@@ -182,16 +183,23 @@ exports.modifyComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-    connection.query('SELECT comment, user_id FROM comment WHERE id = ?', req.body.id, function(err, result, field){
+    connection.query('SELECT * FROM comment WHERE user_id AND comment_id = ?', [req.body.decodedToken.userId,req.body.comment_id], function(err, result, field){
         if (err) throw err;
         if (req.body.decodedToken.userId === result[0].user_id) {
-            const filename = result[0].image_url.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                connection.query('DELETE FROM comment WHERE comment_id = ?', req.body.id, function(err, result, field) {
+            if(result[0].image_url != null) {
+                const filename = result[0].image_url.split('/images/')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    connection.query('DELETE FROM comment WHERE comment_id = ?', [req.body.comment_id], function(err, result, field) {
+                        if (err) throw err;
+                        res.status(200).json({ message: 'Commentaire supprimé !'});
+                    });
+                });
+            } else {
+                connection.query('DELETE FROM comment WHERE comment_id = ?', [req.body.comment_id], function(err, result, field) {
                     if (err) throw err;
                     res.status(200).json({ message: 'Commentaire supprimé !'});
                 });
-            });
+            }
         } else {
             res.status(401).json({ err: new Error ('Requête invalide !')});
         };

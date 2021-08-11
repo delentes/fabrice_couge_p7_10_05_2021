@@ -167,6 +167,7 @@ img {
     width: 30%;
     padding: 10px;
     transition: .4s background-color;
+    margin-left: 5px;
     margin-bottom: 10px;
     
   }

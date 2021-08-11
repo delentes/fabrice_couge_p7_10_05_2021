@@ -38,8 +38,9 @@ export default {
             this.selectedFile = event.target.files[0]
         },
         createComment: async function (topic_id) {
+            const self = this
             const formData = new FormData()
-            if (this.selectedFile == '') {
+            if (this.selectedFile) {
                 formData.append('image', this.selectedFile)
                 formData.append('name', this.selectedFile.name)
             }
@@ -48,6 +49,7 @@ export default {
             formData.append('topic_id',topic_id)
             await this.$store.dispatch('createComment', formData)
             .then(function() {
+                self.selectedFile = '';
                 window.location.reload();
             })
             .catch(function(error) {

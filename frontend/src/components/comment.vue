@@ -1,7 +1,7 @@
 <template>
     <div v-show= "findcomment" v-for="comment of comments" :key="comment.comment_id" class="card">
         <p v-if="mode == 'comment'">{{comment.comment}}</p>
-        <input v-if="mode == 'modify'" v-model="commentmodify" class="form-row__input" type="text" >
+        <input v-if="mode == 'modify'" v-model="commentModify" class="form-row__input" type="text" >
         <div class="form-row">
             <img v-if="mode == 'comment'" v-bind:src="comment.image_url" alt="">
             <input @change="onFileSelected" v-if="mode == 'modify'" class="form-row__input" name="image" type="file" accept="image/png, image/jpg, image/jpeg, image/gif">
@@ -12,9 +12,9 @@
             <button v-if="findUserComment(comment.id)" @click="switchToModifyComment" class="button__modify">Modifier</button>
             <button v-if="findUserComment(comment.id)" @click="deleteComment(comment.comment_id)" class="button__sup">Supprimer</button>
         </div>
-        <div v-if="mode == 'modify'">
+        <div v-if="mode == 'modify'" class="form-row">
             <button @click="switchToComment" class="button__modify">Annuler</button>
-            <button @click="modifyComment(comment.comment_id)" class="button__sup">Envoyer</button>
+            <button @click="modifyComment(comment.comment_id,comment.topic_id)" class="button__sup">Envoyer</button>
         </div>
     </div>
 </template>
@@ -27,13 +27,13 @@ export default {
         return {
             mode: 'comment',
             comment: '',
-            commentmodify: '',
+            commentModify: '',
         }
     },
     
     mounted: function () {
         this.$store.dispatch('getComment', this.$route.params.id)
-        this.comment = this.comments.comment
+        this.comment = this.comment.comment
     },
     computed: {
         findcomment: function () {
@@ -62,16 +62,19 @@ export default {
         onFileSelected (event) {
             this.selectedFile = event.target.files[0]
         },
-        modifyComment: async function () {
+        modifyComment: async function (comment_id) {
+            const self = this
             const formData = new FormData()
-            if (this.selectedFile == '') {
+            if (this.selectedFile) {
                 formData.append('image', this.selectedFile)
                 formData.append('name', this.selectedFile.name)
             }
-            formData.append('comment',this.commentmodify)
+            formData.append('comment',this.commentModify)
             formData.append('user_id',this.$store.state.user.userId)
+            formData.append('comment_id',comment_id)
             await this.$store.dispatch('modifyComment', formData)
             .then(function() {
+                self.selectedFile = '';
                 window.location.reload();
             })
             .catch(function(error) {

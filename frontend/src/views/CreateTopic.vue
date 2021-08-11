@@ -58,6 +58,7 @@ export default {
             formData.append('user_id',this.$store.state.user.userId)
             await this.$store.dispatch('createTopic', formData)
             .then(function() {
+                self.selectedFile = '';
                 self.$router.push('/Topics');
             })
             .catch(function(error) {
