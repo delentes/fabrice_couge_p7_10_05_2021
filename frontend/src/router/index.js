@@ -10,17 +10,17 @@ const routes = [
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('../views/profile.vue')
+    component: () => import('../views/Profile.vue')
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/login.vue')
+    component: () => import('../views/Login.vue')
   },
   {
     path: '/topics',
     name: 'Topics',
-    component: () => import('../views/topics.vue')
+    component: () => import('../views/Topics.vue')
   },
   {
     path: '/admin',
@@ -30,12 +30,12 @@ const routes = [
   {
     path: '/topics/:id',
     name: 'Topic',
-    component: () => import('../views/oneTopic.vue')
+    component: () => import('../views/OneTopic.vue')
   },
   {
     path: '/createTopic',
     name: 'createTopic',
-    component: () => import('../views/createTopic.vue')
+    component: () => import('../views/CreateTopic.vue')
   },
   
 ]
