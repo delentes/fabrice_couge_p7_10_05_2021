@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
 require('dotenv').config();
 
-console.log(process.env.dbport,process.env.host)
-
 const connection = mysql.createConnection({
     host: process.env.host,
     dbport: process.env.port,
