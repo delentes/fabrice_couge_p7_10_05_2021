@@ -1,11 +1,23 @@
-# fabrice_couge_p7_10_05_2021
-Clone this repo.
-From within the Backend, run `npm install`. 
-You can then run the server with `node server`. 
-The server should run on `localhost` with default port `3000`.
-If the server runs on another port for any reason, this is printed to the
-console when the server starts, e.g. `Listening on port 3001`.
+PROJET GROUPOMANIA
 
-From within the frontend, run `npm install`
-run `npm install`
-Go to `http: // localhost: 8080`
+Télécharger le repository et décompresser le fichier ZIP
+
+Veuillez démarrer votre serveur MYSQL avec wamp, xamp ou autre, puis importer le fichier SQL de la bdd : mygroupomania.sql 
+
+BACKEND:
+Depuis le backend ,
+Ouvrez le terminal ,
+Exécutez : npm install .
+Puis npm init .
+vous pouvez ensuite exécutez le serveur avec : node server ou nodemon server
+le serveu doit fonctionner sur le localhost avec le port par défault 3000 .
+si le serveur fonctionne sur un autre port pour une raison quelconque, celui-ci est imprimé sur la console lorsque le serveur démarre par exemple : Listening on port 3001.
+
+FRONTEND:
+Depuis le frontend ,
+Ouvrez le terminal ,
+Exectutez: npm install.
+Puis npm init .
+vous pouvez ensuite exécutez le frontend avec: npm run serve
+
+depuis votre navigateur entré l'adresse http://localhost:8081/
