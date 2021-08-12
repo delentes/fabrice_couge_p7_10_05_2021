@@ -10,7 +10,7 @@ Ouvrez le terminal ,
 Exécutez : npm install .
 Puis npm init .
 vous pouvez ensuite exécutez le serveur avec : node server ou nodemon server
-le serveu doit fonctionner sur le localhost avec le port par défault 3000 .
+le serveur doit fonctionner sur le localhost avec le port par défault 3000
 si le serveur fonctionne sur un autre port pour une raison quelconque, celui-ci est imprimé sur la console lorsque le serveur démarre par exemple : Listening on port 3001.
 
 FRONTEND:
