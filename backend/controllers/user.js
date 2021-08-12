@@ -1,14 +1,16 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
+require('dotenv').config();
 
+console.log(process.env.dbport,process.env.host)
 
 const connection = mysql.createConnection({
-    host:'localhost',
-    port:'3306',
-    user:'admin',
-    password:'admin',
-    database:'groupomania',
+    host: process.env.host,
+    dbport: process.env.port,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database,
 });
 
 exports.signup = (req, res, next) => {
@@ -60,7 +62,7 @@ exports.login = (req, res, next) => {
                 res.status(200).json({userId, isadmin,
                     token: jwt.sign(
                         { userId: result[0].id },
-                        'RANDOM_SECRET_TOKEN',
+                        process.env.tokenkey,
                         {expiresIn: '24h'}
                     )
                 });
@@ -103,7 +105,7 @@ exports.getAllUser = (req, res, next) => {
         if (result[0].isadmin === 0 ) {
             res.status(403).json({ message: 'Vous n\'avez pas les droits d\'administration'});
         } else 
-            connection.query('SELECT id, lastname, firstname, email, password FROM user', function(err, result, field) {
+            connection.query('SELECT * FROM user', function(err, result, field) {
                 if (err) throw err;
                 res.status(200).json(result)
             });

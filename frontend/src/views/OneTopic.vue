@@ -99,10 +99,9 @@ export default {
         switchToOneTopic: function () {
             this.mode = 'topic';
         },
-        deleteTopic: function (topic_id) {
-            this.$store.dispatch('deleteTopic', topic_id)
-            this.$router.push('/topics')
-            window.location.reload();
+        deleteTopic: async function (topic_id) {
+            await this.$store.dispatch('deleteTopic', topic_id);
+            this.$router.push('/topics');
         },
         onFileSelected (event) {
             this.selectedFile = event.target.files[0]
@@ -138,6 +137,7 @@ export default {
             this.$store.dispatch('signalTopic', {
                 topic_id: topic_id,
             })
+            window.location.reload();
         },
         addLike: function () {
             this.$store.dispatch('addLike', {

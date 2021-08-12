@@ -34,8 +34,6 @@ export default {
     
     mounted: async function () {
        await this.$store.dispatch('getComment', this.$route.params.id)
-        console.log(this.comments)
-        
         for (const comment of this.comments) {
             this.commentModify[comment.comment_id] = {
                 text: comment.comment,
@@ -90,15 +88,14 @@ export default {
             });
         },
         deleteComment: function (comment_id) {
-            this.$store.dispatch('deleteComment', {
-                comment_id:comment_id,
-            })
+            this.$store.dispatch('deleteComment', comment_id)
             window.location.reload();
         },
         signalSpam: function (comment_id) {
             this.$store.dispatch('signalComment', {
                 comment_id: comment_id,
             })
+            window.location.reload();
         },
     },
 }

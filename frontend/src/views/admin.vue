@@ -6,8 +6,11 @@
             <div class="card" v-for="user of usersInfos" :key="user.id">
                 <p>{{user.lastname}} {{user.firstname}}</p>
                 <p>{{user.email}}</p>
-                <button @click="addAdmin(user.id)" aria-label="ajout administrateur" class="button__blue__admin">Ajouter un administrateur</button>
-                <button @click="deleteUser(user.id)" aria-label="suppréssion utilisateur" class="button__admin">Supprimé l'utilisateur</button>
+                <div v-if="!findUser(user.id)">
+                    <button @click="addAdmin(user.id)" v-if="findisadmin(user.isadmin)" aria-label="ajout administrateur" class="button__blue__admin">Supprimer les droits</button>
+                    <button @click="addAdmin(user.id)" v-else aria-label="ajout administrateur" class="button__blue__admin">Ajouter un administrateur</button>
+                    <button @click="deleteUser(user.id)" aria-label="suppréssion utilisateur" class="button__admin">Supprimé l'utilisateur</button>
+                </div>
             </div>
         </div>
         <div class="">
@@ -40,10 +43,11 @@ export default {
     } else if (this.$store.state.user.isadmin === 0) {
         this.$router.push('/login');
         return;
-    }
-    this.$store.dispatch('getAllUsers');
-    this.$store.dispatch('getSpamComment');
-    this.$store.dispatch('getSpamTopic');
+    } else {
+        this.$store.dispatch('getAllUsers');
+        this.$store.dispatch('getSpamComment');
+        this.$store.dispatch('getSpamTopic');
+        }
     },
     computed: {
         findSpamComment: function () {
@@ -66,9 +70,11 @@ export default {
     methods: {
         addAdmin: function (id) {
             this.$store.dispatch('addAdmin', id)
+            window.location.reload();
         },
         deleteUser: function (id) {
             this.$store.dispatch('deleteUser', id)
+            window.location.reload();
         },
         cancelSpamComment: function (id) {
             this.$store.dispatch('cancelSpamComment', {
@@ -95,6 +101,20 @@ export default {
                 topic_id: topic_id,
             });
             window.location.reload();
+        },
+        findisadmin: function (isadmin) {
+            if (isadmin != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        findUser: function (user_id) {
+            if (this.$store.state.user.userId === user_id) {
+                return true;
+            } else {
+                return false;
+            }
         },
     },
 }

@@ -10,32 +10,32 @@ const routes = [
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('../views/Profile.vue')
+    component: () => import('../views/profile.vue')
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/Login.vue')
+    component: () => import('../views/login.vue')
   },
   {
     path: '/topics',
     name: 'Topics',
-    component: () => import('../views/Topics.vue')
+    component: () => import('../views/topics.vue')
   },
   {
     path: '/admin',
     name: 'Admin',
-    component: () => import('../views/Admin.vue')
+    component: () => import('../views/admin.vue')
   },
   {
     path: '/topics/:id',
     name: 'Topic',
-    component: () => import('../views/OneTopic.vue')
+    component: () => import('../views/oneTopic.vue')
   },
   {
     path: '/createTopic',
     name: 'createTopic',
-    component: () => import('../views/CreateTopic.vue')
+    component: () => import('../views/createTopic.vue')
   },
   
 ]

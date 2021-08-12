@@ -1,13 +1,13 @@
 const mysql = require('mysql');
 const fs = require('fs');
-
+require('dotenv').config();
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    port: '3306',
-    user: 'admin',
-    password: 'admin',
-    database: 'groupomania'
+    host: process.env.host,
+    dbport: process.env.port,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database
 });
 
 // Topic management
@@ -181,19 +181,19 @@ exports.modifyComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-    connection.query('SELECT * FROM comment WHERE user_id AND comment_id = ?', [req.body.decodedToken.userId,req.body.comment_id], function(err, result, field){
+    connection.query('SELECT * FROM comment WHERE comment_id = ?', req.params.id, function(err, result, field){
         if (err) throw err;
         if (req.body.decodedToken.userId === result[0].user_id) {
             if(result[0].image_url != null) {
                 const filename = result[0].image_url.split('/images/')[1];
                 fs.unlink(`images/${filename}`, () => {
-                    connection.query('DELETE FROM comment WHERE comment_id = ?', [req.body.comment_id], function(err, result, field) {
+                    connection.query('DELETE FROM comment WHERE comment_id = ?', [req.params.id], function(err, result, field) {
                         if (err) throw err;
                         res.status(200).json({ message: 'Commentaire supprimé !'});
                     });
                 });
             } else {
-                connection.query('DELETE FROM comment WHERE comment_id = ?', [req.body.comment_id], function(err, result, field) {
+                connection.query('DELETE FROM comment WHERE comment_id = ?', [req.params.id], function(err, result, field) {
                     if (err) throw err;
                     res.status(200).json({ message: 'Commentaire supprimé !'});
                 });

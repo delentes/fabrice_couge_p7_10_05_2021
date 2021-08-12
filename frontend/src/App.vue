@@ -1,10 +1,10 @@
 <template>
-  <div>
     <div id="nav">
       <nav-bar></nav-bar>
     </div>
-    <router-view/>
-  </div>
+    <div>
+      <router-view/>
+    </div>
 </template>
 
 <script>
@@ -31,6 +31,7 @@ export default {
 
 #app {
   max-width: 100%;
+  justify-content: center;
 }
 
 body {
@@ -54,7 +55,13 @@ img {
   border-radius: 16px;
   padding:32px;
   margin-bottom: 10px;
-  margin-right: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}
+
+.topics {
+  justify-content: center;
 }
 
 .card__title {
@@ -193,9 +200,12 @@ img {
     background: #9e0e40;
   }
   .navbar{
-        text-decoration: none;
-        padding: 20px;
-        font-weight: 900;
-        color:rgb(63, 61, 61);
+    text-decoration: none;
+    padding: 20px;
+    font-weight: 900;
+    color:rgb(63, 61, 61);
     }
+  #nav{
+    margin-bottom: 10px;
+  }
 </style>

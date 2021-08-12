@@ -2,7 +2,7 @@
     <div class="topics" >
         <h1 class="card__title">Sujet</h1>
         <button @click="createTopic()" class="button">Poster un sujet</button>
-        <div class="card" v-for="topic of topics" :key ="topic.topic_id">
+        <div v-show= "findtopics" class="card" v-for="topic of topics" :key ="topic.topic_id">
             <a @click="getOneTopic(topic.topic_id)" class="link" >
                 <h3 class="card__subtitle">{{topic.title}}</h3>
                 <p>{{topic.topic}}</p>
@@ -27,7 +27,13 @@ export default {
     }
     this.$store.dispatch('getTopics');
     },
-    computed:{
+    computed:{findtopics: function () {
+            if (this.$store.state.topics != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        },
         ...mapState({
             topics: 'topic',
         })
