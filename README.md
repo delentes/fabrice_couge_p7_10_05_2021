@@ -22,7 +22,7 @@ vous pouvez ensuite exécutez le frontend avec: npm run serve
 
 depuis votre navigateur entré l'adresse http://localhost:8081/
 
-un compte admistrateur a été créer afin de pouvoir géré le site ou permetre à un autre utilisateur acquérir les droits d'administration,
+un compte administrateur a été créé afin de pouvoir gérer le site ou permettre à un autre utilisateur acquérir les droits d'administration,
 pour cela connectez vous avec le compte administrateur
 email: admin@gmail.com
 mot de passe: Admin1234$
